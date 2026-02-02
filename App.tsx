@@ -120,33 +120,35 @@ const App: React.FC = () => {
   }, [user]);
 
   const navigateTo = useCallback((newStep: AppStep) => {
-    window.location.hash = `#/${newStep}`;
+    const path = newStep === 'setup' ? '/' : `/${newStep}`;
+    window.history.pushState({ step: newStep }, '', path);
     setStep(newStep);
   }, []);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#/', '');
+    const handlePopState = (event: PopStateEvent) => {
+      // Try to get step from state, otherwise fallback to parsing pathname
+      const newStep = event.state?.step || window.location.pathname.replace('/', '');
       const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard'];
 
-      if (validSteps.includes(hash as AppStep)) {
-        if (hash === 'quiz' && !activeSession && redoQuestions.length === 0 && !isLoading) {
-          setStep('setup');
-          window.location.hash = '#/setup';
-          return;
-        }
-        setStep(hash as AppStep);
+      if (validSteps.includes(newStep as AppStep)) {
+        setStep(newStep as AppStep);
       } else {
         setStep('setup');
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    const currentHash = window.location.hash.replace('#/', '');
-    if (currentHash) handleHashChange();
+    window.addEventListener('popstate', handlePopState);
 
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [activeSession, redoQuestions, isLoading]);
+    // Initial path parsing
+    const currentPath = window.location.pathname.replace('/', '') || 'setup';
+    const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard'];
+    if (validSteps.includes(currentPath as AppStep)) {
+      setStep(currentPath as AppStep);
+    }
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('k7_stats', JSON.stringify(stats));
