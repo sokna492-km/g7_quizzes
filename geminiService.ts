@@ -14,8 +14,8 @@ export const generateQuiz = async (
 ): Promise<Question[]> => {
   // Always initialize GoogleGenAI with a named parameter inside the function.
   // This ensures the most up-to-date API key is used from the execution environment.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
+  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+
   const prompt = `
     You are a professional Grade 7 teacher in Cambodia. 
     Generate a quiz based on the following textbook context (RAG):
@@ -68,12 +68,12 @@ export const generateQuiz = async (
     // Directly access the .text property (not a method call).
     const text = response.text || "[]";
     const result = JSON.parse(text);
-    
+
     // Safety check to ensure we only return questions that have valid options
-    const filteredResult = (result as Question[]).filter(q => 
-      q.questionText && 
-      Array.isArray(q.options) && 
-      q.options.length === 4 && 
+    const filteredResult = (result as Question[]).filter(q =>
+      q.questionText &&
+      Array.isArray(q.options) &&
+      q.options.length === 4 &&
       q.options.every(opt => opt && String(opt).trim().length > 0)
     );
 
