@@ -5,6 +5,7 @@ import SubjectCard from './components/SubjectCard';
 import QuizPlayer from './components/QuizPlayer';
 import AuthModal from './components/AuthModal';
 import UserDashboard from './components/UserDashboard';
+import NumberChase from './components/NumberChase';
 import { Subject, Difficulty, Question, UserStats, QuizResult, Chapter, QuizSession, User } from './types';
 import { SUBJECTS_CONFIG } from './constants';
 import { generateQuiz } from './geminiService';
@@ -32,7 +33,7 @@ function getTimePerQuestion(d: Difficulty): number {
   }
 }
 
-type AppStep = 'setup' | 'loading' | 'quiz' | 'result' | 'dashboard';
+type AppStep = 'setup' | 'loading' | 'quiz' | 'result' | 'dashboard' | 'math-game';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -170,7 +171,7 @@ const App: React.FC = () => {
     const handlePopState = (event: PopStateEvent) => {
       // Try to get step from state, otherwise fallback to parsing pathname
       const newStep = event.state?.step || window.location.pathname.replace('/', '');
-      const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard'];
+      const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard', 'math-game'];
 
       if (validSteps.includes(newStep as AppStep)) {
         setStep(newStep as AppStep);
@@ -183,7 +184,7 @@ const App: React.FC = () => {
 
     // Initial path parsing
     const currentPath = window.location.pathname.replace('/', '') || 'setup';
-    const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard'];
+    const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard', 'math-game'];
     if (validSteps.includes(currentPath as AppStep)) {
       setStep(currentPath as AppStep);
     }
@@ -306,7 +307,7 @@ const App: React.FC = () => {
 
       const lastSeen = getLastSeenTracking();
       await updateDoc(statsRef, {
-        totalPoints: increment(score * 10),
+        totalPoints: increment(score * 250),
         streak: newStreak,
         lastQuizDate: today,
         history: arrayUnion(newResult),
@@ -316,7 +317,7 @@ const App: React.FC = () => {
         if (err.code === 'not-found') {
           const now = Date.now();
           await setDoc(statsRef, {
-            totalPoints: score * 10,
+            totalPoints: score * 250,
             streak: newStreak,
             lastQuizDate: today,
             history: [newResult],
@@ -464,6 +465,7 @@ const App: React.FC = () => {
       onLogoClick={reset}
       onAuthClick={() => setIsAuthOpen(true)}
       onDashboardClick={() => navigateTo('dashboard')}
+      hideFooter={step === 'loading' || step === 'quiz'}
     >
       <AuthModal
         isOpen={isAuthOpen}
@@ -491,6 +493,19 @@ const App: React.FC = () => {
                   }}
                 />
               ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedSubject(null);
+                  setSelectedUnitTitle('');
+                  setSelectedChapter(null);
+                  navigateTo('math-game');
+                }}
+                className="relative flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-200 border-2 border-slate-100 text-center group bg-white text-slate-600 hover:border-indigo-200 hover:shadow-lg"
+              >
+                <span className="text-4xl mb-3 block transform group-hover:scale-110 transition-transform">🎯</span>
+                <span className="khmer-font font-semibold text-lg text-slate-800">ល្បែងគណិត</span>
+              </button>
             </div>
           </section>
 
@@ -669,9 +684,9 @@ const App: React.FC = () => {
             </div>
 
             <div className="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 text-center">
-              <div className="w-9 h-9 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg mb-2 mx-auto">⭐</div>
+              <div className="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg mb-2 mx-auto khmer-font font-bold">៛</div>
               <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1 khmer-font">រង្វាន់</p>
-              <p className="font-bold text-emerald-600 text-sm">+{lastScore * 10} XP</p>
+              <p className="font-bold text-emerald-600 text-sm">+{(lastScore * 250).toLocaleString()} ៛</p>
             </div>
           </div>
 
@@ -694,6 +709,8 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {step === 'math-game' && <NumberChase onBack={() => navigateTo('setup')} />}
     </Layout>
   );
 };

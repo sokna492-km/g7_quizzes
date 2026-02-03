@@ -11,9 +11,11 @@ interface LayoutProps {
   onLogoClick?: () => void;
   onAuthClick?: () => void;
   onDashboardClick?: () => void;
+  /** When true, footer (copyright) is not shown (e.g. during quiz and loading). */
+  hideFooter?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onAuthClick, onDashboardClick }) => {
+const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onAuthClick, onDashboardClick, hideFooter }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -81,8 +83,8 @@ const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onA
                   <span className="font-bold text-amber-700">{stats.streak}</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100">
-                  <span className="text-xl">⭐</span>
-                  <span className="font-bold text-indigo-700">{stats.totalPoints}</span>
+                  <span className="text-xl khmer-font font-bold text-indigo-700">៛</span>
+                  <span className="font-bold text-indigo-700">{(stats.totalPoints ?? 0).toLocaleString()}</span>
                 </div>
               </>
             )}
@@ -94,9 +96,23 @@ const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onA
         {children}
       </main>
 
-      <footer className="py-8 text-center text-slate-400 text-sm border-t border-slate-100 bg-white/50 relative z-10">
-        <p>© 2026 KhmerGrade7 AI - For a brighter future.</p>
-      </footer>
+      {!hideFooter && (
+        <footer className="py-8 px-4 text-slate-400 text-sm border-t border-slate-100 bg-white/50 relative z-10">
+          <div className="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <p>© 2026 KhmerGrade7 AI - ចំណេះដឹងដើម្បីអនាគត</p>
+            <a
+              href="https://t.me/SoknaSS"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 transition-colors shrink-0"
+              aria-label="Say hi to developer on Telegram"
+            >
+              <span>Say hi to developer</span>
+              <img src="/telegram-svgrepo-com.svg" alt="" className="w-5 h-5 shrink-0" aria-hidden="true" />
+            </a>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };
