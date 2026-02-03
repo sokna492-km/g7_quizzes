@@ -22,6 +22,16 @@ import {
 import { getLastSeenTracking } from './clientContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
+/** Seconds per question by difficulty: Easy 30s, Medium 45s, Hard 60s */
+function getTimePerQuestion(d: Difficulty): number {
+  switch (d) {
+    case Difficulty.Easy: return 30;
+    case Difficulty.Medium: return 45;
+    case Difficulty.Hard: return 60;
+    default: return 30;
+  }
+}
+
 type AppStep = 'setup' | 'loading' | 'quiz' | 'result' | 'dashboard';
 
 const App: React.FC = () => {
@@ -213,7 +223,7 @@ const App: React.FC = () => {
         questions: q,
         currentIdx: 0,
         score: 0,
-        timeLeft: 30,
+        timeLeft: getTimePerQuestion(difficulty),
         lastUpdated: Date.now()
       };
 
@@ -252,7 +262,7 @@ const App: React.FC = () => {
       questions: targetQuestions,
       currentIdx: 0,
       score: 0,
-      timeLeft: 30,
+      timeLeft: getTimePerQuestion(difficulty),
       lastUpdated: Date.now()
     };
     setActiveSession(newSession);
@@ -587,7 +597,8 @@ const App: React.FC = () => {
           questions={activeSession?.questions || redoQuestions}
           initialIdx={activeSession?.currentIdx || 0}
           initialScore={activeSession?.score || 0}
-          initialTime={activeSession?.timeLeft || 30}
+          initialTime={activeSession?.timeLeft ?? getTimePerQuestion(activeSession?.difficulty ?? difficulty)}
+          timePerQuestion={getTimePerQuestion(activeSession?.difficulty ?? difficulty)}
           onFinish={handleQuizFinish}
           onProgressUpdate={handleProgressUpdate}
         />

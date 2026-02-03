@@ -8,6 +8,8 @@ interface QuizPlayerProps {
   initialIdx?: number;
   initialScore?: number;
   initialTime?: number;
+  /** Max seconds per question (used for countdown and next-question reset). Default 30. */
+  timePerQuestion?: number;
   onFinish: (score: number) => void;
   onProgressUpdate: (idx: number, score: number, timeLeft: number) => void;
 }
@@ -17,6 +19,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
   initialIdx = 0,
   initialScore = 0,
   initialTime = 30,
+  timePerQuestion = 30,
   onFinish,
   onProgressUpdate
 }) => {
@@ -143,7 +146,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       setCurrentIdx(nextIdx);
       setSelectedIdx(null);
       setIsAnswered(false);
-      const nextTime = 30;
+      const nextTime = timePerQuestion;
       setTimeLeft(nextTime);
       onProgressUpdate(nextIdx, score, nextTime);
     } else {
@@ -153,10 +156,10 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
 
   const progress = ((currentIdx + 1) / (questions.length || 1)) * 100;
 
-  // Timer Circle Calculation
+  // Timer Circle Calculation (based on timePerQuestion)
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (timeLeft / 30) * circumference;
+  const strokeDashoffset = circumference - (timeLeft / timePerQuestion) * circumference;
 
   if (!currentQuestion) {
     return (
