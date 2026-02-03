@@ -50,6 +50,33 @@ export interface UserStats {
   history: QuizResult[];
 }
 
+/** Profile/tracking fields stored in Firestore (same document as UserStats). Never store passwords. */
+export interface UserProfileTracking {
+  email?: string;
+  displayName?: string;
+  provider?: 'email' | 'google';
+  photoURL?: string | null;
+  createdAt?: number;
+
+  firstSeenAt?: number;
+  lastSeenAt?: number;
+  lastSeenUserAgent?: string;
+  lastSeenDeviceType?: 'mobile' | 'tablet' | 'desktop';
+  lastSeenBrowser?: string;
+  lastSeenBrowserVersion?: string | null;
+  lastSeenOs?: string;
+  lastSeenOsVersion?: string | null;
+  lastSeenTimezone?: string;
+  lastSeenLanguage?: string;
+  lastSeenScreenWidth?: number;
+  lastSeenScreenHeight?: number;
+  lastSeenPlatform?: string;
+  lastSeenTouchSupport?: boolean;
+  lastSeenOnLine?: boolean;
+  lastSeenHardwareConcurrency?: number | null;
+  lastSeenDeviceMemory?: number | null;
+}
+
 export interface Chapter {
   id: string;
   title: string;

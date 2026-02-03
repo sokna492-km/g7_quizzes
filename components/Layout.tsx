@@ -1,6 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { UserStats, User } from '../types';
+import { useTheme } from '../context/ThemeContext';
+import FloatingBackground from './FloatingBackground';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,11 +14,12 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onAuthClick, onDashboardClick }) => {
-
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-[60] shadow-sm">
+    <div className="min-h-screen bg-slate-50 flex flex-col relative">
+      <FloatingBackground />
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-[60] shadow-sm relative">
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <button
             onClick={onLogoClick}
@@ -33,8 +36,22 @@ const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onA
           </button>
 
           <div className="flex items-center gap-2 sm:gap-4">
-
-
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition-colors"
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={theme === 'dark' ? 'ភ្លឺ' : 'ងងឹត'}
+            >
+              {theme === 'dark' ? (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
             {user ? (
               <button
                 onClick={onDashboardClick}
@@ -73,12 +90,11 @@ const Layout: React.FC<LayoutProps> = ({ children, stats, user, onLogoClick, onA
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow w-full">
+      <main className="max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow w-full relative z-10">
         {children}
       </main>
 
-      <footer className="py-8 text-center text-slate-400 text-sm border-t border-slate-100 bg-white/50">
-
+      <footer className="py-8 text-center text-slate-400 text-sm border-t border-slate-100 bg-white/50 relative z-10">
         <p>© 2026 KhmerGrade7 AI - For a brighter future.</p>
       </footer>
     </div>

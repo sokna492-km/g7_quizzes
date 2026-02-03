@@ -19,6 +19,7 @@ import {
   arrayUnion,
   onSnapshot
 } from 'firebase/firestore';
+import { getLastSeenTracking } from './clientContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 type AppStep = 'setup' | 'loading' | 'quiz' | 'result' | 'dashboard';
@@ -104,20 +105,50 @@ const App: React.FC = () => {
     const statsRef = doc(db, 'users', user.id);
     const unsubscribe = onSnapshot(statsRef, (docSnap) => {
       if (docSnap.exists()) {
-        setStats(docSnap.data() as UserStats);
+        const data = docSnap.data();
+        setStats({
+          totalPoints: data.totalPoints ?? 0,
+          streak: data.streak ?? 0,
+          lastQuizDate: data.lastQuizDate ?? null,
+          history: Array.isArray(data.history) ? data.history : []
+        });
       } else {
-        // Initialize user document if it doesn't exist
+        // Initialize user document with stats + profile + tracking (never store password)
+        const now = Date.now();
+        const lastSeen = getLastSeenTracking();
         setDoc(statsRef, {
           totalPoints: 0,
           streak: 0,
           lastQuizDate: null,
-          history: []
+          history: [],
+          email: user.email || null,
+          displayName: user.displayName || null,
+          provider: user.provider || null,
+          photoURL: user.photoURL || null,
+          createdAt: now,
+          firstSeenAt: now,
+          ...lastSeen
         });
       }
     });
 
     return () => unsubscribe();
   }, [user]);
+
+  // Update lastSeen + client context once per session when user is present
+  useEffect(() => {
+    if (!user) return;
+    const statsRef = doc(db, 'users', user.id);
+    const t = setTimeout(async () => {
+      try {
+        const snap = await getDoc(statsRef);
+        if (snap.exists()) {
+          await updateDoc(statsRef, getLastSeenTracking());
+        }
+      } catch (_) {}
+    }, 800);
+    return () => clearTimeout(t);
+  }, [user?.id]);
 
   const navigateTo = useCallback((newStep: AppStep) => {
     const path = newStep === 'setup' ? '/' : `/${newStep}`;
@@ -263,19 +294,29 @@ const App: React.FC = () => {
         timestamp: Date.now()
       };
 
+      const lastSeen = getLastSeenTracking();
       await updateDoc(statsRef, {
         totalPoints: increment(score * 10),
         streak: newStreak,
         lastQuizDate: today,
-        history: arrayUnion(newResult)
+        history: arrayUnion(newResult),
+        ...lastSeen
       }).catch(async (err) => {
         // If document doesn't exist, create it
         if (err.code === 'not-found') {
+          const now = Date.now();
           await setDoc(statsRef, {
             totalPoints: score * 10,
             streak: newStreak,
             lastQuizDate: today,
-            history: [newResult]
+            history: [newResult],
+            email: user.email || null,
+            displayName: user.displayName || null,
+            provider: user.provider || null,
+            photoURL: user.photoURL || null,
+            createdAt: now,
+            firstSeenAt: now,
+            ...lastSeen
           });
         }
       });
@@ -296,6 +337,37 @@ const App: React.FC = () => {
     setRedoQuestions([]);
     navigateTo('setup');
   };
+
+  const handleClearHistory = useCallback(async () => {
+    if (!user) return;
+    const statsRef = doc(db, 'users', user.id);
+    const clearedStats = {
+      totalPoints: 0,
+      streak: 0,
+      lastQuizDate: null,
+      history: [] as QuizResult[],
+      ...getLastSeenTracking()
+    };
+    try {
+      await updateDoc(statsRef, clearedStats);
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'not-found') {
+        const now = Date.now();
+        await setDoc(statsRef, {
+          ...clearedStats,
+          email: user.email || null,
+          displayName: user.displayName || null,
+          provider: user.provider || null,
+          photoURL: user.photoURL || null,
+          createdAt: now,
+          firstSeenAt: now
+        });
+      } else {
+        throw err;
+      }
+    }
+  }, [user]);
 
   const groupedChapters = selectedSubject ? (() => {
     const chapters = SUBJECTS_CONFIG[selectedSubject].chapters;
@@ -489,6 +561,7 @@ const App: React.FC = () => {
           user={user}
           stats={stats}
           onUpdateProfile={(name) => setUser({ ...user, displayName: name })}
+          onClearHistory={handleClearHistory}
         />
       )}
 
