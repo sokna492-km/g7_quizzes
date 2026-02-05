@@ -28,8 +28,6 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(initialScore);
   const [timeLeft, setTimeLeft] = useState(initialTime);
-  const [showSavedToast, setShowSavedToast] = useState(false);
-
   const currentQuestion = questions[currentIdx];
   const audioCtxRef = useRef<AudioContext | null>(null);
 
@@ -43,8 +41,8 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
     }
   };
 
-  // Synthesized sound effects
-  const playSound = (type: 'correct' | 'incorrect' | 'save') => {
+  // Synthesized sound effects (correct/incorrect only)
+  const playSound = (type: 'correct' | 'incorrect') => {
     if (!audioCtxRef.current) return;
     const ctx = audioCtxRef.current;
     const osc = ctx.createOscillator();
@@ -64,7 +62,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       gain.gain.linearRampToValueAtTime(0, now + 0.3);
       osc.start(now);
       osc.stop(now + 0.3);
-    } else if (type === 'incorrect') {
+    } else {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(220, now); // A3
       osc.frequency.linearRampToValueAtTime(110, now + 0.2); // A2
@@ -73,14 +71,6 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       gain.gain.linearRampToValueAtTime(0, now + 0.4);
       osc.start(now);
       osc.stop(now + 0.4);
-    } else if (type === 'save') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, now); // A5
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.05, now + 0.02);
-      gain.gain.linearRampToValueAtTime(0, now + 0.15);
-      osc.start(now);
-      osc.stop(now + 0.15);
     }
   };
 
@@ -90,16 +80,11 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
     stateRef.current = { currentIdx, score, timeLeft };
   }, [currentIdx, score, timeLeft]);
 
-  // Periodic Auto-save effect (exactly every 30 seconds)
+  // Periodic Auto-save effect (exactly every 30 seconds) — silent, no toast/sound
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
       const { currentIdx, score, timeLeft } = stateRef.current;
       onProgressUpdate(currentIdx, score, timeLeft);
-
-      // Trigger visually appealing toast
-      setShowSavedToast(true);
-      playSound('save');
-      setTimeout(() => setShowSavedToast(false), 3000);
     }, 30000);
 
     return () => clearInterval(autoSaveInterval);
@@ -173,21 +158,6 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
 
   return (
     <div className="max-w-2xl mx-auto px-2 relative" onClick={initAudio}>
-      {/* Enhanced Auto-save Toast Notification */}
-      <div className={`fixed top-24 left-1/2 -translate-x-1/2 transition-all duration-700 pointer-events-none z-50 ${showSavedToast ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-8 scale-90'}`}>
-        <div className="bg-white/90 backdrop-blur-md border border-emerald-100 text-emerald-700 px-6 py-3 rounded-2xl text-sm khmer-font shadow-2xl shadow-emerald-200/40 flex items-center gap-3">
-          <div className="bg-emerald-500 rounded-full p-1 shadow-inner">
-            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold leading-tight">រក្សាទុកដោយស្វ័យប្រវត្តិ</span>
-            <span className="text-[10px] opacity-70 uppercase tracking-tighter">Progress Synchronized</span>
-          </div>
-        </div>
-      </div>
-
       {/* Header Info: Progress and Timer */}
       <div className="mb-6">
         <div className="flex justify-between items-end mb-3">
