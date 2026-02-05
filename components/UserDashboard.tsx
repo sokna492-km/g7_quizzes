@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { User, UserStats } from '../types';
 import { auth } from '../firebaseConfig';
+import { getQuizResultDateTime } from '../utils/dateUtils';
 import { signOut, updateProfile, updatePassword } from 'firebase/auth';
 
 interface UserDashboardProps {
@@ -275,7 +276,11 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ user, stats, onUpdateProf
                 ) : (
                   <div className="grid gap-3">{stats.history.slice().reverse().map((h, i) => (
                     <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                      <div><h4 className="font-bold text-slate-800 text-sm khmer-font line-clamp-1">{h.chapter}</h4><p className="text-[10px] text-slate-400 font-bold uppercase">{h.subject}</p></div>
+                      <div>
+                        <h4 className="font-bold text-slate-800 text-sm khmer-font line-clamp-1">{h.chapter}</h4>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase">{h.subject}</p>
+                        <p className="text-xs text-slate-500 mt-1">{getQuizResultDateTime(h)}</p>
+                      </div>
                       <span className="text-lg font-black text-indigo-600">{h.score}/{h.totalQuestions}</span>
                     </div>
                   ))}</div>

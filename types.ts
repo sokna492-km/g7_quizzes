@@ -9,7 +9,8 @@ export enum Subject {
   EarthScience = 'ផែនដីវិទ្យា',
   Geography = 'ភូមិវិទ្យា',
   History = 'ប្រវត្តិវិទ្យា',
-  English = 'ភាសាអង់គ្លេស'
+  English = 'ភាសាអង់គ្លេស',
+  Python = 'Python'
 }
 
 export enum Difficulty {
@@ -31,7 +32,10 @@ export interface QuizResult {
   subject: Subject;
   chapter: string;
   difficulty: Difficulty;
-  timestamp: number;
+  /** Phnom Penh date/time, sortable format (e.g. "2026-02-05 16:20") */
+  dateTimePhnomPenh: string;
+  /** @deprecated Legacy field; only present on old records. New writes use dateTimePhnomPenh only. */
+  timestamp?: number;
 }
 
 export interface User {
@@ -43,11 +47,18 @@ export interface User {
   createdAt: number;
 }
 
+/** One entry for each time the user opened "Play Math Game" (ល្បែងគណិត). */
+export interface MathGameVisit {
+  dateTimePhnomPenh: string;
+}
+
 export interface UserStats {
   totalPoints: number;
   streak: number;
   lastQuizDate: string | null;
   history: QuizResult[];
+  /** Log of when the user opened the Math Game (Number Chase). */
+  mathGameVisits?: MathGameVisit[];
 }
 
 /** Profile/tracking fields stored in Firestore (same document as UserStats). Never store passwords. */

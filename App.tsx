@@ -21,6 +21,7 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import { getLastSeenTracking } from './clientContext';
+import { formatPhnomPenhDateTime } from './utils/dateUtils';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 /** Seconds per question by difficulty: Easy 30s, Medium 45s, Hard 60s */
@@ -121,7 +122,8 @@ const App: React.FC = () => {
           totalPoints: data.totalPoints ?? 0,
           streak: data.streak ?? 0,
           lastQuizDate: data.lastQuizDate ?? null,
-          history: Array.isArray(data.history) ? data.history : []
+          history: Array.isArray(data.history) ? data.history : [],
+          mathGameVisits: Array.isArray(data.mathGameVisits) ? data.mathGameVisits : []
         });
       } else {
         // Initialize user document with stats + profile + tracking (never store password)
@@ -132,6 +134,7 @@ const App: React.FC = () => {
           streak: 0,
           lastQuizDate: null,
           history: [],
+          mathGameVisits: [],
           email: user.email || null,
           displayName: user.displayName || null,
           provider: user.provider || null,
@@ -166,6 +169,37 @@ const App: React.FC = () => {
     window.history.pushState({ step: newStep }, '', path);
     setStep(newStep);
   }, []);
+
+  /** Record in Firestore when the user opens "Play Math Game" (ល្បែងគណិត). Activity only — do not add math game score to totalPoints; the game is for fun. */
+  const trackMathGameVisit = useCallback(async () => {
+    if (!user) return;
+    const statsRef = doc(db, 'users', user.id);
+    const entry = { dateTimePhnomPenh: formatPhnomPenhDateTime(Date.now()) };
+    try {
+      await updateDoc(statsRef, { mathGameVisits: arrayUnion(entry) });
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'not-found') {
+        const lastSeen = getLastSeenTracking();
+        await setDoc(statsRef, {
+          totalPoints: 0,
+          streak: 0,
+          lastQuizDate: null,
+          history: [],
+          mathGameVisits: [entry],
+          email: user.email || null,
+          displayName: user.displayName || null,
+          provider: user.provider || null,
+          photoURL: user.photoURL || null,
+          createdAt: Date.now(),
+          firstSeenAt: Date.now(),
+          ...lastSeen
+        });
+      } else {
+        throw err;
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
@@ -216,7 +250,14 @@ const App: React.FC = () => {
     navigateTo('loading');
 
     try {
-      const q = await generateQuiz(selectedSubject, selectedChapter.title, selectedChapter.summary, difficulty);
+      const isPython = selectedSubject === Subject.Python;
+      const q = await generateQuiz(
+        selectedSubject,
+        selectedChapter.title,
+        selectedChapter.summary,
+        difficulty,
+        isPython ? { numQuestions: 10, inEnglish: true } : {}
+      );
       const newSession: QuizSession = {
         subject: selectedSubject,
         chapter: selectedChapter,
@@ -283,6 +324,7 @@ const App: React.FC = () => {
     });
   };
 
+  /** Lesson quiz completion. totalPoints and history are for lesson quizzes only; Math Game (Number Chase) score is never added here. */
   const handleQuizFinish = async (score: number) => {
     const total = (activeSession?.questions.length || redoQuestions.length || 5);
     setLastTotalQuestions(total);
@@ -302,7 +344,7 @@ const App: React.FC = () => {
         subject: activeSession?.subject || selectedSubject!,
         chapter: activeSession?.chapter.title || selectedChapter!.title,
         difficulty: activeSession?.difficulty || difficulty,
-        timestamp: Date.now()
+        dateTimePhnomPenh: formatPhnomPenhDateTime(Date.now())
       };
 
       const lastSeen = getLastSeenTracking();
@@ -481,7 +523,7 @@ const App: React.FC = () => {
             <h2 className="text-3xl font-extrabold text-slate-800 mb-2 khmer-font">សួស្តី {user ? user.displayName.split(' ')[0] : 'មិត្តអ្នករៀន'}! 👋</h2>
             <p className="text-slate-500 text-lg mb-8 khmer-font">ជ្រើសរើសមុខវិជ្ជា និងមេរៀន ដើម្បីចាប់ផ្តើមបង្កើតលំហាត់ដោយ Ai ។</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.values(Subject).map(sub => (
+              {(Object.values(Subject) as Subject[]).filter(sub => sub !== Subject.Python || user?.email === 'binglomole@gmail.com').map(sub => (
                 <SubjectCard
                   key={sub}
                   subject={sub}
@@ -499,6 +541,7 @@ const App: React.FC = () => {
                   setSelectedSubject(null);
                   setSelectedUnitTitle('');
                   setSelectedChapter(null);
+                  trackMathGameVisit();
                   navigateTo('math-game');
                 }}
                 className="relative flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-200 border-2 border-slate-100 text-center group bg-white text-slate-600 hover:border-indigo-200 hover:shadow-lg"

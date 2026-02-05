@@ -336,7 +336,7 @@ const NumberChase: React.FC<NumberChaseProps> = ({ onBack }) => {
           >
             {feedback === 'correct' && 'រកឃើញហើយ! Got it!'}
             {feedback === 'wrong' && 'អត់ទេ! Nope!'}
-            {feedback === 'timeup' && "Time's up! អស់ពេវិនាទី!"}
+            {feedback === 'timeup' && "Time's up! អស់ពេលហើយ!"}
           </div>
         )}
 

@@ -2,6 +2,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Question, Subject, Difficulty } from "./types";
 
+export interface GenerateQuizOptions {
+  /** Number of questions (default 5). For Python subject, can be 5–10. */
+  numQuestions?: number;
+  /** If true, generate question text, options, and explanation in English (e.g. for Python). */
+  inEnglish?: boolean;
+}
+
 /**
  * Generates a quiz based on subject and chapter content using Gemini API.
  * Uses gemini-3-flash-preview for efficiency and to reduce quota exhaustion risks.
@@ -10,13 +17,47 @@ export const generateQuiz = async (
   subject: Subject,
   chapterTitle: string,
   chapterSummary: string,
-  difficulty: Difficulty
+  difficulty: Difficulty,
+  options: GenerateQuizOptions = {}
 ): Promise<Question[]> => {
+  const { numQuestions = 5, inEnglish = false } = options;
+  const count = Math.min(10, Math.max(1, numQuestions || 5));
+
   // Always initialize GoogleGenAI with a named parameter inside the function.
-  // This ensures the most up-to-date API key is used from the execution environment.
   const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
-  const prompt = `
+  const langInstructions = inEnglish
+    ? `
+    CRITICAL REQUIREMENTS (all in English):
+    1. The "questionText" must be a complete question in English.
+    2. The "options" array MUST contain exactly 4 distinct strings in English.
+    3. Each option MUST be a plausible, non-empty answer. Do NOT leave options blank.
+    4. The "correctAnswerIndex" (0-3) must point to the correct option.
+    5. The "explanation" must be a helpful paragraph in English explaining WHY the answer is correct.`
+    : `
+    CRITICAL REQUIREMENTS:
+    1. The "questionText" must be a complete question in Khmer.
+    2. The "options" array MUST contain exactly 4 distinct strings. 
+    3. Each option MUST be a plausible, non-empty answer in Khmer. Do NOT leave options blank.
+    4. The "correctAnswerIndex" (0-3) must point to the correct option.
+    5. The "explanation" must be a helpful paragraph in Khmer explaining WHY the answer is correct.
+    Technical terms for Mathematics or Science can be in English in parentheses if standard.`;
+
+  const prompt = inEnglish
+    ? `
+    You are a professional programming instructor. 
+    Generate a quiz based on the following Python learning context:
+    
+    SUBJECT: ${subject}
+    CHAPTER: ${chapterTitle}
+    CONTENT SUMMARY: ${chapterSummary}
+    DIFFICULTY: ${difficulty}
+    
+    The quiz must have exactly ${count} multiple-choice questions. 
+    Each question must be clear and appropriate for someone learning Python.
+    ${langInstructions}
+  `
+    : `
     You are a professional Grade 7 teacher in Cambodia. 
     Generate a quiz based on the following textbook context (RAG):
     
@@ -25,17 +66,9 @@ export const generateQuiz = async (
     CONTENT SUMMARY: ${chapterSummary}
     DIFFICULTY: ${difficulty}
     
-    The quiz must have exactly 5 multiple-choice questions. 
+    The quiz must have exactly ${count} multiple-choice questions. 
     Each question must be appropriate for a 12-13 year old Grade 7 student.
-    
-    CRITICAL REQUIREMENTS:
-    1. The "questionText" must be a complete question in Khmer.
-    2. The "options" array MUST contain exactly 4 distinct strings. 
-    3. Each option MUST be a plausible, non-empty answer in Khmer. Do NOT leave options blank.
-    4. The "correctAnswerIndex" (0-3) must point to the correct option.
-    5. The "explanation" must be a helpful paragraph in Khmer explaining WHY the answer is correct.
-    
-    Technical terms for Mathematics or Science can be in English in parentheses if standard.
+    ${langInstructions}
   `;
 
   try {

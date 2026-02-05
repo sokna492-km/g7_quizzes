@@ -183,5 +183,44 @@ export const SUBJECTS_CONFIG: Record<Subject, { icon: string; chapters: Chapter[
       { id: 'eng_c4_u32', title: 'Chapter 4 - Unit 32: Is that really real?', summary: 'Expressing doubt and belief. Describing mythical creatures and real science facts.' },
       { id: 'eng_c4_u33', title: 'Chapter 4 - Unit 33: More questions', summary: 'Summary of the Grade 7 English curriculum with a focus on question formation and review.' }
     ]
+  },
+  [Subject.Python]: {
+    icon: '🐍',
+    chapters: [
+      { id: 'py_1', title: 'Beginner - Introduction to Python', summary: 'What Python is, installation, IDEs (VS Code, PyCharm, Jupyter), running Python scripts and interactive shell.' },
+      { id: 'py_2', title: 'Beginner - Python Syntax Basics', summary: 'Indentation rules, comments, variables and naming conventions.' },
+      { id: 'py_3', title: 'Beginner - Data Types', summary: 'Numbers (int, float, complex), strings, boolean, type conversion.' },
+      { id: 'py_4', title: 'Beginner - Operators', summary: 'Arithmetic, comparison, logical, assignment, membership and identity operators.' },
+      { id: 'py_5', title: 'Beginner - Input and Output', summary: 'print(), input(), formatting strings (f-strings).' },
+      { id: 'py_6', title: 'Beginner - Control Flow', summary: 'if, elif, else, nested conditions.' },
+      { id: 'py_7', title: 'Beginner - Loops', summary: 'for loop, while loop, break, continue, pass.' },
+      { id: 'py_8', title: 'Intermediate - Data Structures', summary: 'Lists, tuples, sets, dictionaries.' },
+      { id: 'py_9', title: 'Intermediate - List Comprehension', summary: 'Basic and advanced comprehension techniques.' },
+      { id: 'py_10', title: 'Intermediate - Functions', summary: 'Defining functions, parameters and return values, default and keyword arguments, lambda functions.' },
+      { id: 'py_11', title: 'Intermediate - Modules and Packages', summary: 'Importing modules, creating custom modules, standard libraries overview.' },
+      { id: 'py_12', title: 'Intermediate - File Handling', summary: 'Reading files, writing files, working with CSV and JSON.' },
+      { id: 'py_13', title: 'Intermediate - Error Handling', summary: 'try/except, finally, custom exceptions.' },
+      { id: 'py_14', title: 'Intermediate - Object-Oriented Programming (OOP)', summary: 'Classes and objects, constructors, inheritance, encapsulation, polymorphism.' },
+      { id: 'py_15', title: 'Upper Intermediate - Virtual Environments and Package Management', summary: 'venv, pip, requirements.txt.' },
+      { id: 'py_16', title: 'Upper Intermediate - Working with Libraries', summary: 'NumPy, Pandas, Requests, Matplotlib.' },
+      { id: 'py_17', title: 'Upper Intermediate - Testing', summary: 'Unit testing, pytest, debugging techniques.' },
+      { id: 'py_18', title: 'Upper Intermediate - Working with APIs', summary: 'REST APIs, JSON handling, authentication basics.' },
+      { id: 'py_19', title: 'Upper Intermediate - Databases', summary: 'SQLite, CRUD operations, ORM basics (SQLAlchemy).' },
+      { id: 'py_20', title: 'Advanced - Advanced Python Concepts', summary: 'Generators, decorators, context managers, iterators.' },
+      { id: 'py_21', title: 'Advanced - Concurrency and Parallelism', summary: 'Threading, multiprocessing, async programming.' },
+      { id: 'py_22', title: 'Advanced - Performance Optimization', summary: 'Profiling, memory management, efficient algorithms.' },
+      { id: 'py_23', title: 'Advanced - Security Basics', summary: 'Input validation, safe file handling, environment variables.' },
+      { id: 'py_24', title: 'Data & AI - Data Analysis with Pandas', summary: 'Data analysis workflows with Pandas.' },
+      { id: 'py_25', title: 'Data & AI - Data Visualization', summary: 'Charts and visualizations.' },
+      { id: 'py_26', title: 'Data & AI - Machine Learning', summary: 'scikit-learn, TensorFlow, PyTorch.' },
+      { id: 'py_27', title: 'Data & AI - AI and LLM integration', summary: 'Integrating with AI and large language models.' },
+      { id: 'py_28', title: 'Web Development - Flask or FastAPI', summary: 'Web frameworks for Python.' },
+      { id: 'py_29', title: 'Web Development - Django Framework', summary: 'Django web framework.' },
+      { id: 'py_30', title: 'Web Development - Authentication systems', summary: 'User auth in web apps.' },
+      { id: 'py_31', title: 'Web Development - Deployment and DevOps', summary: 'Deploying Python applications.' },
+      { id: 'py_32', title: 'Automation - Web scraping', summary: 'BeautifulSoup, Selenium.' },
+      { id: 'py_33', title: 'Automation - Task automation', summary: 'Automating tasks with Python.' },
+      { id: 'py_34', title: 'Automation - CLI tools', summary: 'Command-line interface tools.' }
+    ]
   }
 };
