@@ -3,7 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { Question, Subject, Difficulty } from "./types";
 
 export interface GenerateQuizOptions {
-  /** Number of questions (default 5). For Python subject, can be 5–10. */
+  /** Number of questions (default 7). For Python subject, can be 7–10. */
   numQuestions?: number;
   /** If true, generate question text, options, and explanation in English (e.g. for Python). */
   inEnglish?: boolean;
@@ -20,8 +20,8 @@ export const generateQuiz = async (
   difficulty: Difficulty,
   options: GenerateQuizOptions = {}
 ): Promise<Question[]> => {
-  const { numQuestions = 5, inEnglish = false } = options;
-  const count = Math.min(10, Math.max(1, numQuestions || 5));
+  const { numQuestions = 7, inEnglish = false } = options;
+  const count = Math.min(10, Math.max(1, numQuestions || 7));
 
   // Always initialize GoogleGenAI with a named parameter inside the function.
   const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });

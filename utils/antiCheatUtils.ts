@@ -31,8 +31,8 @@ export function generateShuffledIndices(questions: { options: any[] }[]): number
  * Validation thresholds for anti-cheat system
  */
 export const VALIDATION_THRESHOLDS = {
-    MIN_ACCURACY: 0.7,           // 70% minimum accuracy
-    MIN_AVG_TIME: 5,             // 5 seconds minimum average per question
+    MIN_ACCURACY: 4 / 7,           // 57.1% minimum accuracy (4 out of 7 questions)
+    MIN_AVG_TIME: 6,             // 6 seconds minimum average per question
     RAPID_CLICK_THRESHOLD: 2,    // Answers under 2 seconds are considered rapid
     NEXT_BUTTON_DELAY: 3000,     // 3 seconds delay before showing Next button
 } as const;

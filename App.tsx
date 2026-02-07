@@ -67,7 +67,7 @@ const App: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [lastScore, setLastScore] = useState(0);
-  const [lastTotalQuestions, setLastTotalQuestions] = useState(5);
+  const [lastTotalQuestions, setLastTotalQuestions] = useState(7);
   const [redoQuestions, setRedoQuestions] = useState<Question[]>([]);
   const [loadingMessageIdx, setLoadingMessageIdx] = useState(0);
   const [quotaError, setQuotaError] = useState<boolean>(false);
@@ -343,7 +343,7 @@ const App: React.FC = () => {
 
   /** Lesson quiz completion. totalPoints and history are for lesson quizzes only; Math Game (Number Chase) score is never added here. */
   const handleQuizFinish = async (score: number, wrongAnswers: number, questionTimes: number[], rapidClickCount: number) => {
-    const total = (activeSession?.questions.length || redoQuestions.length || 5);
+    const total = (activeSession?.questions.length || redoQuestions.length || 7);
     setLastTotalQuestions(total);
     setLastScore(score);
     const today = new Date().toDateString();
