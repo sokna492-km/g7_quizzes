@@ -22,7 +22,11 @@ import {
 } from 'firebase/firestore';
 import { getLastSeenTracking } from './clientContext';
 import { formatPhnomPenhDateTime } from './utils/dateUtils';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import {
+  generateShuffledIndices,
+  validateQuizResults,
+  calculateFinalPayout
+} from './utils/antiCheatUtils';
 
 /** Seconds per question by difficulty: Easy 30s, Medium 45s, Hard 60s */
 function getTimePerQuestion(d: Difficulty): number {
@@ -159,7 +163,7 @@ const App: React.FC = () => {
         if (snap.exists()) {
           await updateDoc(statsRef, getLastSeenTracking());
         }
-      } catch (_) {}
+      } catch (_) { }
     }, 800);
     return () => clearTimeout(t);
   }, [user?.id]);
@@ -266,7 +270,11 @@ const App: React.FC = () => {
         currentIdx: 0,
         score: 0,
         timeLeft: getTimePerQuestion(difficulty),
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
+        wrongAnswers: 0,
+        questionTimes: [],
+        rapidClickCount: 0,
+        shuffledIndices: generateShuffledIndices(q)
       };
 
       setRedoQuestions(q);
@@ -305,7 +313,11 @@ const App: React.FC = () => {
       currentIdx: 0,
       score: 0,
       timeLeft: getTimePerQuestion(difficulty),
-      lastUpdated: Date.now()
+      lastUpdated: Date.now(),
+      wrongAnswers: 0,
+      questionTimes: [],
+      rapidClickCount: 0,
+      shuffledIndices: generateShuffledIndices(targetQuestions)
     };
     setActiveSession(newSession);
     navigateTo('quiz');
@@ -325,11 +337,15 @@ const App: React.FC = () => {
   };
 
   /** Lesson quiz completion. totalPoints and history are for lesson quizzes only; Math Game (Number Chase) score is never added here. */
-  const handleQuizFinish = async (score: number) => {
+  const handleQuizFinish = async (score: number, wrongAnswers: number, questionTimes: number[], rapidClickCount: number) => {
     const total = (activeSession?.questions.length || redoQuestions.length || 5);
     setLastTotalQuestions(total);
     setLastScore(score);
     const today = new Date().toDateString();
+
+    // PHASE 1 & 2: Anti-Cheat Validation using centralized utilities
+    const validation = validateQuizResults(score, total, questionTimes);
+    const finalPoints = calculateFinalPayout(score, wrongAnswers, total, questionTimes);
 
     if (user) {
       const statsRef = doc(db, 'users', user.id);
@@ -344,12 +360,15 @@ const App: React.FC = () => {
         subject: activeSession?.subject || selectedSubject!,
         chapter: activeSession?.chapter.title || selectedChapter!.title,
         difficulty: activeSession?.difficulty || difficulty,
-        dateTimePhnomPenh: formatPhnomPenhDateTime(Date.now())
+        dateTimePhnomPenh: formatPhnomPenhDateTime(Date.now()),
+        wrongAnswers,
+        averageTimePerQuestion: validation.averageTime,
+        isValid: validation.isValid
       };
 
       const lastSeen = getLastSeenTracking();
       await updateDoc(statsRef, {
-        totalPoints: increment(score * 250),
+        totalPoints: increment(finalPoints),
         streak: newStreak,
         lastQuizDate: today,
         history: arrayUnion(newResult),
@@ -359,7 +378,7 @@ const App: React.FC = () => {
         if (err.code === 'not-found') {
           const now = Date.now();
           await setDoc(statsRef, {
-            totalPoints: score * 250,
+            totalPoints: finalPoints,
             streak: newStreak,
             lastQuizDate: today,
             history: [newResult],
@@ -373,6 +392,11 @@ const App: React.FC = () => {
           });
         }
       });
+
+      // Show validation feedback if quiz failed anti-cheat
+      if (!validation.isValid && validation.failureReasons.length > 0) {
+        alert(`❌ មិនទទួលបានរង្វាន់\n\n${validation.failureReasons.join('\n')}\n\nសូមព្យាយាមអានសំណួរឱ្យបានល្អិតល្អន់!`);
+      }
     }
 
     // Keep history length capped at 20 in the UI (local state will be updated by onSnapshot)
@@ -482,15 +506,6 @@ const App: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [step]);
-
-  const avgAccuracy = stats.history.length > 0
-    ? (stats.history.reduce((acc, curr) => acc + (curr.score / curr.totalQuestions), 0) / stats.history.length * 100).toFixed(0)
-    : 0;
-
-  const chartData = stats.history.slice(-10).map((h, i) => ({
-    name: i + 1,
-    score: (h.score / h.totalQuestions) * 100,
-  }));
 
   if (isInitializing) {
     return (
@@ -659,6 +674,10 @@ const App: React.FC = () => {
           timePerQuestion={getTimePerQuestion(activeSession?.difficulty ?? difficulty)}
           onFinish={handleQuizFinish}
           onProgressUpdate={handleProgressUpdate}
+          initialShuffledIndices={activeSession?.shuffledIndices}
+          initialWrongAnswers={activeSession?.wrongAnswers || 0}
+          initialQuestionTimes={activeSession?.questionTimes || []}
+          initialRapidClickCount={activeSession?.rapidClickCount || 0}
         />
       )}
 

@@ -36,6 +36,12 @@ export interface QuizResult {
   dateTimePhnomPenh: string;
   /** @deprecated Legacy field; only present on old records. New writes use dateTimePhnomPenh only. */
   timestamp?: number;
+  /** Number of wrong answers (for penalty calculation) */
+  wrongAnswers?: number;
+  /** Average time per question in seconds (for anti-cheat validation) */
+  averageTimePerQuestion?: number;
+  /** Whether this quiz passed anti-cheat validation */
+  isValid?: boolean;
 }
 
 export interface User {
@@ -105,4 +111,12 @@ export interface QuizSession {
   score: number;
   timeLeft: number;
   lastUpdated: number;
+  /** Track wrong answers for penalty system */
+  wrongAnswers?: number;
+  /** Track time spent on each question (in seconds) */
+  questionTimes?: number[];
+  /** Track rapid clicks (answers under 2 seconds) */
+  rapidClickCount?: number;
+  /** Shuffled answer indices for each question */
+  shuffledIndices?: number[][];
 }
