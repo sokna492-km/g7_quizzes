@@ -6,6 +6,7 @@ import QuizPlayer from './components/QuizPlayer';
 import AuthModal from './components/AuthModal';
 import UserDashboard from './components/UserDashboard';
 import NumberChase from './components/NumberChase';
+import ValidationModal from './components/ValidationModal';
 import { Subject, Difficulty, Question, UserStats, QuizResult, Chapter, QuizSession, User } from './types';
 import { SUBJECTS_CONFIG } from './constants';
 import { generateQuiz } from './geminiService';
@@ -70,6 +71,10 @@ const App: React.FC = () => {
   const [redoQuestions, setRedoQuestions] = useState<Question[]>([]);
   const [loadingMessageIdx, setLoadingMessageIdx] = useState(0);
   const [quotaError, setQuotaError] = useState<boolean>(false);
+
+  // Validation modal state
+  const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
+  const [validationFailureReasons, setValidationFailureReasons] = useState<string[]>([]);
 
   const loadingMessages = [
     "កំពុងអានសៀវភៅសិក្សារបស់អ្នក...",
@@ -395,7 +400,8 @@ const App: React.FC = () => {
 
       // Show validation feedback if quiz failed anti-cheat
       if (!validation.isValid && validation.failureReasons.length > 0) {
-        alert(`❌ មិនទទួលបានរង្វាន់\n\n${validation.failureReasons.join('\n')}\n\nសូមព្យាយាមអានសំណួរឱ្យបានល្អិតល្អន់!`);
+        setValidationFailureReasons(validation.failureReasons);
+        setIsValidationModalOpen(true);
       }
     }
 
@@ -528,6 +534,12 @@ const App: React.FC = () => {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onUserUpdate={(updatedUser) => setUser(updatedUser)}
+      />
+
+      <ValidationModal
+        isOpen={isValidationModalOpen}
+        onClose={() => setIsValidationModalOpen(false)}
+        failureReasons={validationFailureReasons}
       />
 
       {step === 'setup' && (
