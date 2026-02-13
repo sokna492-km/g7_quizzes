@@ -83,10 +83,11 @@ export function validateQuizResults(
     const passedTimeCheck = averageTime >= VALIDATION_THRESHOLDS.MIN_AVG_TIME;
     const isValid = passedAccuracyCheck && passedTimeCheck;
 
+    const minRequiredCorrect = Math.ceil(totalQuestions * VALIDATION_THRESHOLDS.MIN_ACCURACY);
     const failureReasons: string[] = [];
     if (!passedAccuracyCheck) {
         failureReasons.push(
-            `ត្រូវការភាពត្រឹមត្រូវយ៉ាងតិច ${VALIDATION_THRESHOLDS.MIN_ACCURACY * 100}% (អ្នកទទួលបាន ${(accuracy * 100).toFixed(0)}%)`
+            `ត្រូវការភាពត្រឹមត្រូវយ៉ាងតិច ${minRequiredCorrect} សំណួរ (អ្នកឆ្លើយត្រូវត្រឹមតែ ${score} សំណួរ)`
         );
     }
     if (!passedTimeCheck) {
