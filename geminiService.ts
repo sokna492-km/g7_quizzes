@@ -53,8 +53,16 @@ export const generateQuiz = async (
     CONTENT SUMMARY: ${chapterSummary}
     DIFFICULTY: ${difficulty}
     
-    The quiz must have exactly ${count} multiple-choice questions. 
-    Each question must be clear and appropriate for someone learning Python.
+    The quiz must have exactly 7 questions with this EXACT distribution:
+    - 1 x MCQ: Standard multiple choice.
+    - 1 x Matching: Match 3-4 items/definitions on the left to their corresponding categories/names on the right.
+    - 1 x TrueFalse: True or False question.
+    - 1 x FillInTheBlank: Must require a NUMERICAL answer ONLY (the answer should be a number).
+    - 1 x OddOneOut: Which choice doesn't fit the theme?
+    - 1 x DefinitionMatch: Provide a definition, ask for the term.
+    - 1 x WhatsMissing: Describe a list/sequence where one item is missing.
+
+    IMPORTANT: Shuffle the order of these question types.
     ${langInstructions}
   `
     : `
@@ -66,8 +74,16 @@ export const generateQuiz = async (
     CONTENT SUMMARY: ${chapterSummary}
     DIFFICULTY: ${difficulty}
     
-    The quiz must have exactly ${count} multiple-choice questions. 
-    Each question must be appropriate for a 12-13 year old Grade 7 student.
+    The quiz must have exactly 7 questions with this EXACT distribution:
+    - 1 x MCQ: Standard multiple choice.
+    - 1 x Matching: ភ្ជាប់ជួរខាងឆ្វេងជាមួយជួរខាងស្តាំ (Match 3 items on left to 3 categories on right).
+    - 1 x TrueFalse: True or False question.
+    - 1 x FillInTheBlank: Must require a NUMERICAL answer ONLY.
+    - 1 x OddOneOut: Which choice doesn't fit the theme?
+    - 1 x DefinitionMatch: Provide a definition, ask for the term.
+    - 1 x WhatsMissing: Describe a list/sequence where one item is missing.
+
+    IMPORTANT: Shuffle the order of these question types.
     ${langInstructions}
   `;
 
@@ -82,35 +98,69 @@ export const generateQuiz = async (
           items: {
             type: Type.OBJECT,
             properties: {
+              type: {
+                type: Type.STRING,
+                enum: ["MCQ", "TrueFalse", "FillInTheBlank", "OddOneOut", "DefinitionMatch", "WhatsMissing", "Matching"]
+              },
               questionText: { type: Type.STRING },
               options: {
                 type: Type.ARRAY,
                 items: { type: Type.STRING },
-                minItems: 4,
-                maxItems: 4
               },
               correctAnswerIndex: { type: Type.INTEGER },
+              correctAnswerValue: { type: Type.STRING },
+              matchingPairs: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    left: { type: Type.STRING },
+                    right: { type: Type.STRING }
+                  },
+                  required: ["left", "right"]
+                }
+              },
               explanation: { type: Type.STRING },
             },
-            required: ["questionText", "options", "correctAnswerIndex", "explanation"],
+            required: ["type", "questionText", "explanation"],
           },
         },
       },
     });
 
-    // Directly access the .text property (not a method call).
     const text = response.text || "[]";
     const result = JSON.parse(text);
 
-    // Safety check to ensure we only return questions that have valid options
-    const filteredResult = (result as Question[]).filter(q =>
-      q.questionText &&
-      Array.isArray(q.options) &&
-      q.options.length === 4 &&
-      q.options.every(opt => opt && String(opt).trim().length > 0)
-    );
+    // Validation and sanitization
+    const sanitized = (result as Question[]).map(q => {
+      if (q.type === 'Matching') {
+        if (!q.matchingPairs || q.matchingPairs.length === 0) {
+          q.matchingPairs = [{ left: "Item", right: "Category" }];
+        }
+        // Options should include all unique 'right' values for the dropdowns
+        q.options = Array.from(new Set(q.matchingPairs.map(p => p.right)));
+      } else if (q.type === 'TrueFalse') {
+        q.options = ['ត្រឹមត្រូវ', 'មិនត្រឹមត្រូវ'];
+        // Ensure correctAnswerIndex is 0 or 1
+        q.correctAnswerIndex = (q.correctAnswerIndex === 1) ? 1 : 0;
+      } else if (q.type === 'FillInTheBlank') {
+        q.options = [];
+        // Ensure correctAnswerValue is a string representation of a number
+        const num = String(q.correctAnswerValue).replace(/[^0-9.]/g, '');
+        q.correctAnswerValue = num || '0';
+      } else {
+        if (!q.options || q.options.length < 4) {
+          q.options = q.options || [];
+          while (q.options.length < 4) q.options.push(`ជម្រើសទី ${q.options.length + 1}`);
+        }
+        if (q.correctAnswerIndex === undefined || q.correctAnswerIndex < 0 || q.correctAnswerIndex > 3) {
+          q.correctAnswerIndex = 0;
+        }
+      }
+      return q;
+    });
 
-    return filteredResult.length > 0 ? filteredResult : result;
+    return sanitized;
   } catch (error: any) {
     console.error("Error generating quiz:", error);
     // Rethrow to be caught by the UI handler

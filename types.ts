@@ -1,10 +1,10 @@
 
 export enum Subject {
   Mathematics = 'គណិតវិទ្យា',
+  KhmerLiterature = 'អក្សរសាស្រ្តខ្មែរ',
   Physics = 'រូបវិទ្យា',
   Chemistry = 'គីមីវិទ្យា',
   Biology = 'ជីវវិទ្យា',
-  KhmerLiterature = 'អក្សរសាស្រ្តខ្មែរ',
   MoralCivic = 'សីលធម៌ ពលរដ្ឋវិជ្ជា',
   EarthScience = 'ផែនដីវិទ្យា',
   Geography = 'ភូមិវិទ្យា',
@@ -19,10 +19,23 @@ export enum Difficulty {
   Hard = 'ពិបាក'
 }
 
+export enum QuestionType {
+  MCQ = 'MCQ',
+  TrueFalse = 'TrueFalse',
+  FillInTheBlank = 'FillInTheBlank',
+  OddOneOut = 'OddOneOut',
+  DefinitionMatch = 'DefinitionMatch',
+  WhatsMissing = 'WhatsMissing',
+  Matching = 'Matching'
+}
+
 export interface Question {
   questionText: string;
-  options: string[];
-  correctAnswerIndex: number;
+  type: QuestionType;
+  options: string[]; // For choice-based questions (MCQ, TrueFalse, etc.)
+  correctAnswerIndex?: number;
+  correctAnswerValue?: string; // Used for FillInTheBlank
+  matchingPairs?: { left: string; right: string }[]; // Used for Matching type
   explanation: string;
 }
 

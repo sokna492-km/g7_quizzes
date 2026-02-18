@@ -1,0 +1,634 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    GRADE 7 QUIZ SYSTEM - ALL SUBJECTS & CHAPTERS
+═══════════════════════════════════════════════════════════════════════════════
+
+Generated: 2026-02-07
+Total Subjects: 11
+Total Chapters/Lessons: 226
+
+═══════════════════════════════════════════════════════════════════════════════
+📐 SUBJECT 1: MATHEMATICS (22 Lessons)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. មេរៀនទី ១៖ ចំនួនគត់
+   - Whole numbers, place values, and basic arithmetic operations
+
+2. មេរៀនទី ២៖ តួចែកនិងពហុគុណ
+   - Divisors, multiples, prime numbers, GCD, and LCM
+
+3. មេរៀនទី ៣៖ ចំនួនគត់រ៉ឺឡាទី
+   - Signed numbers (integers), positive and negative values
+
+4. មេរៀនទី ៤៖ ប្រភាគ
+   - Fractions, equivalent fractions, operations with fractions
+
+5. មេរៀនទី ៥៖ ចំនួនទសភាគ
+   - Decimal numbers, relationship with fractions, operations
+
+6. មេរៀនទី​ ៦៖ ភាគរយ
+   - Percentages, converting fractions/decimals, practical problems
+
+7. មេរៀនទី​ ៧៖ រង្វាស់រង្វាល់
+   - Metric system units, converting units, measurement problems
+
+8. មេរៀនទី ៨៖ កន្សោមពីជគណិត
+   - Variables, algebraic expressions, simplifying, substituting
+
+9. មេរៀនទី ៩៖ សមីកាដឺក្រេទីមួយមានមួយអញ្ញាត
+   - First-degree equations, solving linear equations, word problems
+
+10. មេរៀនទី ១០៖ វិសមភាព
+    - Inequalities, symbols (<, >, ≤, ≥), basic properties
+
+11. មេរៀនទី ១១៖ ផលធៀបនិងសមាមាត្រ
+    - Ratios, rates, proportions, scale drawings
+
+12. មេរៀនទី ១ ២៖ សញ្ញាណដំបូងនៃរូបធរណីមាត្រ
+    - Basic geometric concepts: points, lines, segments, rays, planes
+
+13. មេរៀនទី ១៣៖ មុំ
+    - Types of angles, measuring with protractor, angle relationships
+
+14. មេរៀនទី ១៤៖ បន្ទាត់ស្រប បន្ទាត់នៅតែ
+    - Parallel lines, perpendicular lines, transversals, angles
+
+15. មេរៀនទី ១៥៖ រូបធរណីមាត្រដែលមានវិមាត្រពីរ
+    - Triangles, quadrilaterals, classification
+
+16. មេរៀនទី ១៦៖ បរិមាត្រនិងផ្ទៃក្រឡាពហុកោណ
+    - Perimeter and area of polygons
+
+17. មេរៀនទី ១៧៖ រង្វង់
+    - Parts of circle, circumference, area
+
+18. មេរៀនទី ១៨៖ មាឌនិងផ្ទៃក្រឡាខាងនៃសូលីត
+    - Surface area and volume of 3D shapes
+
+19. មេរៀនទី ១៩៖ ភាពឆ្លុះ
+    - Line symmetry, point symmetry, symmetrical figures
+
+20. មេរៀនទី ២០៖ ប្រូបាប
+    - Basic probability, outcomes, events
+
+21. មេរៀនទី ២១៖ ក្រាបសសរ
+    - Bar graphs, data collection, interpretation
+
+22. មេរៀនទី ២ ២៖ ក្រាបផ្លិត
+    - Pie charts, calculating angles for sectors
+
+
+═══════════════════════════════════════════════════════════════════════════════
+⚡ SUBJECT 2: PHYSICS (16 Lessons in 4 Chapters)
+═══════════════════════════════════════════════════════════════════════════════
+
+CHAPTER 1: TEMPERATURE AND HEAT (3 Lessons)
+───────────────────────────────────────────
+1. ជំពូកទី១-មេរៀនទី១៖ សីតុណ្ហភាព
+   - Temperature, scales (Celsius, Kelvin), thermometers
+
+2. ជំពូកទី១-មេរៀនទី២៖ ការរីកនៃអង្គធាតុ
+   - Thermal expansion of solids, liquids, gases
+
+3. ជំពូកទី១-មេរៀនទី៣៖ បរិមាណកម្តៅ
+   - Heat as energy, specific heat capacity, Q = mcΔT
+
+CHAPTER 2: HEAT TRANSFER (3 Lessons)
+────────────────────────────────────
+4. ជំពូកទី២-មេរៀនទី១៖ ការចម្លងកម្ដៅ
+   - Conduction in solids, conductors vs insulators
+
+5. ជំពូកទី២-មេរៀនទី២៖ ចរន្តវិលវល់
+   - Convection in fluids, natural convection, heating systems
+
+6. ជំពូកទី២-មេរៀនទី៣៖ ការបញ្ចេញរស្មី
+   - Radiation, infrared waves, absorption/emission
+
+CHAPTER 3: ELECTRICITY (6 Lessons)
+──────────────────────────────────
+7. ជំពូកទី៣-មេរៀនទី១៖ បន្ទុកអគ្គិសនី
+   - Electric charges, attraction/repulsion, static electricity
+
+8. ជំពូកទី៣-មេរៀនទី២៖ ចរន្តអគ្គិសនី
+   - Flow of electrons, measuring current (Amperes), ammeter
+
+9. ជំពូកទី៣-មេរៀនទី៣៖ តង់ស្យុងអគ្គិសនី
+   - Electric potential difference, voltage (Volts), voltmeter
+
+10. ជំពូកទី៣-មេរៀនទី៤៖ រេស៊ីស្តង់អគ្គិសនី
+    - Ohm's Law, resistance, factors affecting resistance
+
+11. ជំពូកទី៣-មេរៀនទី៥៖ ប្រភពចរន្តអគ្គិសនី
+    - Batteries, generators, solar cells, energy conversion
+
+12. ជំពូកទី៣-មេរៀនទី៦៖ សៀគ្វីអគ្គិសនី
+    - Series and parallel circuits, symbols, circuit safety
+
+CHAPTER 4: PRESSURE (4 Lessons)
+───────────────────────────────
+13. ជំពូកទី៤-មេរៀនទី១៖ សម្ពាធនៃអង្គធាតុរឹង
+    - Pressure definition (P = F/A), units (Pascal)
+
+14. ជំពូកទី៤-មេរៀនទី២៖ ការបញ្ចូនសម្ពាធក្នុងសន្ទនីយ
+    - Pascal's Principle, hydraulic systems
+
+15. ជំពូកទី៤-មេរៀនទី៣៖ រង្វាស់សម្ពាធនៃអង្គធាតុរាវ
+    - Hydrostatic pressure, depth relationship
+
+16. ជំពូកទី៤-មេរៀនទី៤៖ សម្ពាធបរិយាកាស
+    - Air pressure, barometers, altitude effects
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🌱 SUBJECT 3: BIOLOGY (8 Lessons)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. មេរៀនទី១៖ រុក្ខជាតិមានផ្កា
+   - Parts of flowers, functions in reproduction
+
+2. មេរៀនទី២៖ ដំណឹកនាំក្នុងរុក្ខជាតិមានផ្កា
+   - Transport systems in plants (xylem, phloem)
+
+3. មេរៀនទី៣៖ រូបផ្តុំកោសិកា
+   - Cell definition, cell membrane, cytoplasm, nucleus
+
+4. មេរៀនទី៤៖ រូបផ្តុំសារពាង្គកាយមនុស្ស
+   - Organization levels: cells → tissues → organs → systems
+
+5. មេរៀនទី៥៖ កោសិការុក្ខជាតិ
+   - Plant cell characteristics, differences from animal cells
+
+6. មេរៀនទី៦៖ ផ្នែកផ្សេងៗនៃប្រដាប់រំលាយអាហារ
+   - Digestive system parts, organs
+
+7. មេរៀនទី៧៖ ការរំលាយអាហារ
+   - Digestion stages (mechanical, chemical), enzymes, absorption
+
+8. មេរៀនទី៨៖ ថ្នាំជក់ និងបារី
+   - Toxic substances in cigarettes, health impacts
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🧪 SUBJECT 4: CHEMISTRY (5 Lessons in 3 Chapters)
+═══════════════════════════════════════════════════════════════════════════════
+
+CHAPTER 1: MATTER AND CLASSIFICATION (2 Lessons)
+─────────────────────────────────────────────────
+1. ជំពូក១៖ រូបធាតុ និង ចំណែកថ្នាក់ - មេរៀនទី១៖ រូបធាតុ
+   - Matter, physical states (solid, liquid, gas), properties
+
+2. ជំពូក១៖ រូបធាតុ និង ចំណែកថ្នាក់ - មេរៀនទី២៖ ចំណែកថ្នាក់រូបធាតុ
+   - Classification of matter by properties
+
+CHAPTER 2: PHYSICAL CHANGES (2 Lessons)
+────────────────────────────────────────
+3. ជំពូក២៖ បំលែងភាពរូប - មេរៀនទី១៖ បំលែងភាពរូបនៃរូបធាតុ
+   - Physical state changes (melting, freezing, boiling, etc.)
+
+4. ជំពូក២៖ បំលែងភាពរូប - មេរៀនទី២៖ កត្តានៃបំលែងរូបធាតុ
+   - Factors causing changes (heat, light, electricity, mixing)
+
+CHAPTER 3: AIR (2 Lessons)
+──────────────────────────
+5. ជំពូក៣៖ ខ្យល់ - មេរៀនទី១៖ ខ្យល់
+   - Air properties, composition, identifying gases (O2, CO2)
+
+6. ជំពូក៣៖ ខ្យល់ - មេរៀនទី២៖ ធាតុកង្វក់ខ្យល់
+   - Air pollution, toxic substances, greenhouse effect
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📖 SUBJECT 5: KHMER LITERATURE (10 Lessons)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. មេរៀនទី ១: សេចក្តីស្រឡាញ់
+   - Compassion, family bonds, humanitarian love
+
+2. មេរៀនទី ២: ការជួយគ្នាទៅវិញទៅមក
+   - Community solidarity, cooperation, helping others
+
+3. មេរៀនទី ៣: កេរដំណែលរបស់ជាតិ
+   - Cambodian national heritage, cultural traditions
+
+4. មេរៀនទី ៤: សេចក្តីថ្លៃថ្នូរ
+   - Self-respect, integrity, human dignity
+
+5. មេរៀនទី ៥: ពលរដ្ឋល្អ
+   - Good citizenship, respecting law, contributing to nation
+
+6. មេរៀនទី ៦: សេចក្ដីប្រាថ្នារបស់យើង
+   - Youth ambitions, setting life goals, personal dreams
+
+7. មេរៀនទី ៧: តម្លៃនៃការងារ
+   - Dignity of labor, appreciation for professions
+
+8. មេរៀនទី ៨: សេចក្តីព្យាយាម
+   - Perseverance, patience, overcoming obstacles
+
+9. មេរៀនទី ៩: សេចក្តីសង្ឃឹម
+   - Optimism, resilience, power of hope
+
+10. មេរៀនទី ១០: បំណងប្រាថ្នាដើម្បីជោគជ័យ
+    - Planning for success, willpower, educational steps
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🤝 SUBJECT 6: MORAL & CIVIC EDUCATION (24 Lessons in 6 Chapters)
+═══════════════════════════════════════════════════════════════════════════════
+
+CHAPTER 1: GENDER AND HUMAN RIGHTS (6 Lessons)
+───────────────────────────────────────────────
+1. ជំពូកទី១ - មេរៀនទី១៖ ភេទនិងយេនឌ័រ
+   - Understanding sex (biological) vs gender (social roles)
+
+2. ជំពូកទី១ - មេរៀនទី២៖ ផ្នត់គំនិត
+   - Stereotypes in society, misconceptions
+
+3. ជំពូកទី១ - មេរៀនទី៣៖ យេនឌ័រ និងផ្នត់គំនិត
+   - Relationship between gender and stereotypes
+
+4. ជំពូកទី១ - មេរៀនទី៤៖ ការរើសអើងនិងបញ្ហាផ្លូវចិត្ត
+   - Gender discrimination impact on mental health
+
+5. ជំពូកទី១ - មេរៀនទី៥៖ ការលុបបំបាត់ការរើសអើងចំពោះស្រី
+   - Strategies to eliminate discrimination against women
+
+6. ជំពូកទី១ - មេរៀនទី៦៖ វិធានការធានាឲ្យមានសមភាពយេនឌ័រ
+   - Laws and policies promoting gender equality
+
+CHAPTER 2: FRIENDSHIP (3 Lessons)
+─────────────────────────────────
+7. ជំពូកទី២ - មេរៀនទី១៖ លក្ខណៈមិត្តល្អ
+   - Characteristics of good friends (honesty, support, respect)
+
+8. ជំពូកទី២ - មេរៀនទី២៖ ការរក្សាមិត្តភាព
+   - Methods to maintain long-lasting friendships
+
+9. ជំពូកទី២ - មេរៀនទី៣៖ សារៈសំខាន់នៃមិត្តភាពល្អ
+   - Importance of friendship in mental support and growth
+
+CHAPTER 3: FAMILY (3 Lessons)
+─────────────────────────────
+10. ជំពូកទី៣ - មេរៀនទី១៖ ប្រភេទនៃគ្រួសារ
+    - Types of families (nuclear, extended), member roles
+
+11. ជំពូកទី៣ - មេរៀនទី២៖ ប្រភពនៃសុភមង្គលគ្រួសារ
+    - Sources of family happiness (love, understanding, economy)
+
+12. ជំពូកទី៣ - មេរៀនទី៣៖ ការកសាងសុភមង្គលគ្រួសារ
+    - Daily activities to strengthen family bonds
+
+CHAPTER 4: LIVING WITH COMMUNITY (6 Lessons)
+─────────────────────────────────────────────
+13. ជំពូកទី៤ - មេរៀនទី១៖ ការបោះឆ្នោត
+    - Democratic voting principles, choosing leaders
+
+14. ជំពូកទី៤ - មេរៀនទី២៖ តួនាទីនិងភារកិច្ចតំណាងសិស្ស
+    - Responsibilities of class representatives
+
+15. ជំពូកទី៤ - មេរៀនទី៣៖ ដំណើរការនៃការបោះឆ្នោត
+    - Voting process steps (registration to results)
+
+16. ជំពូកទី៤ - មេរៀនទី៤៖ លក្ខខណ្ឌនៃការឈរឈ្មោះជាបេក្ខជន
+    - Qualifications for candidates
+
+17. ជំពូកទី៤ - មេរៀនទី៥៖ ការចូលរួមបោះឆ្នោត
+    - Rights and duties in voting freely and fairly
+
+18. ជំពូកទី៤ - មេរៀនទី៦៖ គុណសម្បត្តិនៃអ្នកជាប់បោះឆ្នោត
+    - Qualities of good leaders
+
+CHAPTER 5: LIFE GOALS (3 Lessons)
+─────────────────────────────────
+19. ជំពូកទី៥ - មេរៀនទី១៖ ការជ្រើសរើសអាជីព
+    - Understanding personal skills, matching with careers
+
+20. ជំពូកទី៥ - មេរៀនទី២៖ សារៈសំខាន់នៃការជ្រើសរើសអាជីព
+    - Importance of early career goal setting
+
+21. ជំពូកទី៥ - មេរៀនទី៣៖ ព័ត៌មានអំពីអាជីព
+    - Information sources about job markets and skills
+
+CHAPTER 6: RELIGIOUS BELIEFS (4 Lessons)
+─────────────────────────────────────────
+22. ជំពូកទី៦ - មេរៀនទី១៖ ដើមកំណើតព្រះពុទ្ធសាសនា
+    - History of Buddhism, spread in Cambodia
+
+23. ជំពូកទី៦ - មេរៀនទី២៖ ការអប់រំសំខាន់ៗរបស់សាសនាព្រះពុទ្ធ
+    - Five precepts, peaceful living according to Buddhism
+
+24. ជំពូកទី៦ - មេរៀនទី៣៖ ដើមកំណើតហិណ្ឌូសាសនា
+    - History of Hinduism, major deities (Brahma, Vishnu, Shiva)
+
+25. ជំពូកទី៦ - មេរៀនទី៤៖ ការអប់រំសំខាន់ៗក្នុងហិណ្ឌូសាសនា
+    - Hindu philosophy and beliefs influencing Khmer culture
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🌍 SUBJECT 7: EARTH SCIENCE (6 Lessons)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. មេរៀនទី១៖ កំណកំណើតប្រព័ន្ធព្រះអាទិត្យ
+   - Formation of solar system from solar nebula
+
+2. មេរៀនទី២៖ ផ្កាយពិសេសឬព្រះអាទិត្យ
+   - Sun's characteristics, structure, energy, importance
+
+3. មេរៀនទី៣៖ ចលនារបស់ភព
+   - Earth's revolution around sun, rotation, Kepler's Laws
+
+4. មេរៀនទី៤៖ ភពសំខាន់ៗ
+   - 8 planets: terrestrial vs gas giants
+
+5. មេរៀនទី៥៖ អាចម៍ផ្កាយ ផ្កាយដុះកន្ទុយ ផ្កាយព្រះគ្រោះ
+   - Asteroids, comets, meteoroids in space
+
+6. មេរៀនទី៦៖ ​ចលនារង្វិលរបស់ភពផែនដី
+   - Earth's rotation, day and night phenomenon
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🗺️ SUBJECT 8: GEOGRAPHY (3 Lessons)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. មេរៀនទី១៖ ការប្រើប្រាស់ផែនទី
+   - Map reading basics, scales, symbols, coordinates
+
+2. មេរៀនទី២៖ លក្ខណៈរូបនៃព្រះរាជាណាចក្រកម្ពុជា
+   - Physical features of Cambodia: mountains, plains, coastlines
+
+3. មេរៀនទី៣៖ ប្រព័ន្ធទន្លេមេគង្គ និងបឹងទន្លេសាប
+   - Mekong river system, Tonle Sap lake, economic importance
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🗿 SUBJECT 9: HISTORY (3 Lessons)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. មេរៀនទី១៖ ប្រវត្តិសាស្ត្រ និងការស្រាវជ្រាវ
+   - Definition of history, primary/secondary sources
+
+2. មេរៀនទី២៖ បុរេប្រវត្តិសាស្ត្រនៅកម្ពុជា
+   - Pre-history of Cambodia, early settlements, archaeology
+
+3. មេរៀនទី៣៖ អាណាចក្រភ្នំ (ហ្វូណន)
+   - History of Funan, culture, economy, foreign relations
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🔤 SUBJECT 10: ENGLISH (33 Units in 4 Chapters)
+═══════════════════════════════════════════════════════════════════════════════
+
+CHAPTER 1: SCHOOL LIFE (9 Units)
+─────────────────────────────────
+1. Unit 1: Meeting new friends
+   - Greetings, introductions, pronouns, "to be" verbs
+
+2. Unit 2: Schools around the world
+   - School supplies, describing classrooms
+
+3. Unit 3: Why are you so naughty?
+   - Personality traits, present continuous tense
+
+4. Unit 4: I study English
+   - Daily schedules, academic subjects, simple present
+
+5. Unit 5: Study habits
+   - Adverbs of frequency, learning techniques
+
+6. Unit 6: Talking with teachers
+   - Formal greetings, asking for help, polite expressions
+
+7. Unit 7: Getting ready for school
+   - Clothes, morning routines, time management
+
+8. Unit 8: Going to school
+   - Transportation, prepositions of place, directions
+
+9. Unit 9: After school
+   - Hobbies, extracurricular activities, free time
+
+CHAPTER 2: FAMILY AND FRIENDS (10 Units)
+─────────────────────────────────────────
+10. Unit 10: My family
+    - Family tree vocabulary, possessive adjectives
+
+11. Unit 11: I'm the coolest in my family
+    - Comparative and superlative adjectives
+
+12. Unit 12: Monsters
+    - Describing appearance, body parts
+
+13. Unit 13: Guess what I've got!
+    - "have/has got", personal possessions
+
+14. Unit 14: How do you feel?
+    - Expressing emotions, health states, medical vocabulary
+
+15. Unit 15: What in the world are you wearing?
+    - Clothing for different seasons and cultures
+
+16. Unit 16: I can do it!
+    - Modal verb "can", ability and skills
+
+17. Unit 17: It's my time!
+    - Telling time, schedules, "going to" for future
+
+18. Unit 18: I like my friends
+    - Describing friends, "like/dislike" with gerunds
+
+19. Unit 19: Guesses, tricks and presents
+    - Making predictions, gift-giving scenarios
+
+CHAPTER 3: COMMUNITY AND CULTURE (8 Units)
+───────────────────────────────────────────
+20. Unit 20: Festivals, parties and trouble
+    - Celebrations, festivals in Cambodia, past events
+
+21. Unit 21: A world of fun
+    - International holidays, fun parks, entertainment opinions
+
+22. Unit 22: Cambodian fact files
+    - Cambodia's landmarks, geography, important figures
+
+23. Unit 23: My cool house
+    - Rooms, furniture, prepositions of location
+
+24. Unit 24: Cool places in my town
+    - Public buildings, shops, local neighborhood
+
+25. Unit 25: Do I have to?
+    - Modal "have to" for obligation and necessity
+
+26. Unit 26: New babies
+    - Birth, ages, family life changes, simple past
+
+27. Unit 27: Yummy!
+    - Food vocabulary, countable/uncountable nouns, ordering
+
+CHAPTER 4: STORIES AND HISTORY (6 Units)
+─────────────────────────────────────────
+28. Unit 28: The swinging 60s
+    - 1960s culture, past tense descriptions
+
+29. Unit 29: When I was young
+    - "Used to" / past simple for childhood memories
+
+30. Unit 30: A long, long time ago
+    - Narrating stories, sequencing words (first, next, then, finally)
+
+31. Unit 31: What happened?
+    - Questions about past events (Who, What, Where, When, Why)
+
+32. Unit 32: Is that really real?
+    - Expressing doubt and belief, mythical creatures vs science
+
+33. Unit 33: More questions
+    - Curriculum review, question formation
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🐍 SUBJECT 11: PYTHON PROGRAMMING (34 Chapters)
+═══════════════════════════════════════════════════════════════════════════════
+
+BEGINNER LEVEL (7 Chapters)
+────────────────────────────
+1. Introduction to Python
+   - What Python is, installation, IDEs, running scripts
+
+2. Python Syntax Basics
+   - Indentation rules, comments, variables, naming conventions
+
+3. Data Types
+   - Numbers (int, float, complex), strings, boolean, type conversion
+
+4. Operators
+   - Arithmetic, comparison, logical, assignment, membership, identity
+
+5. Input and Output
+   - print(), input(), formatting strings (f-strings)
+
+6. Control Flow
+   - if, elif, else, nested conditions
+
+7. Loops
+   - for loop, while loop, break, continue, pass
+
+INTERMEDIATE LEVEL (7 Chapters)
+────────────────────────────────
+8. Data Structures
+   - Lists, tuples, sets, dictionaries
+
+9. List Comprehension
+   - Basic and advanced comprehension techniques
+
+10. Functions
+    - Defining functions, parameters, return values, lambda functions
+
+11. Modules and Packages
+    - Importing modules, creating custom modules, standard libraries
+
+12. File Handling
+    - Reading files, writing files, working with CSV and JSON
+
+13. Error Handling
+    - try/except, finally, custom exceptions
+
+14. Object-Oriented Programming (OOP)
+    - Classes, objects, constructors, inheritance, encapsulation, polymorphism
+
+UPPER INTERMEDIATE LEVEL (5 Chapters)
+──────────────────────────────────────
+15. Virtual Environments and Package Management
+    - venv, pip, requirements.txt
+
+16. Working with Libraries
+    - NumPy, Pandas, Requests, Matplotlib
+
+17. Testing
+    - Unit testing, pytest, debugging techniques
+
+18. Working with APIs
+    - REST APIs, JSON handling, authentication basics
+
+19. Databases
+    - SQLite, CRUD operations, ORM basics (SQLAlchemy)
+
+ADVANCED LEVEL (4 Chapters)
+────────────────────────────
+20. Advanced Python Concepts
+    - Generators, decorators, context managers, iterators
+
+21. Concurrency and Parallelism
+    - Threading, multiprocessing, async programming
+
+22. Performance Optimization
+    - Profiling, memory management, efficient algorithms
+
+23. Security Basics
+    - Input validation, safe file handling, environment variables
+
+DATA & AI SPECIALIZATION (4 Chapters)
+──────────────────────────────────────
+24. Data Analysis with Pandas
+    - Data analysis workflows with Pandas
+
+25. Data Visualization
+    - Charts and visualizations
+
+26. Machine Learning
+    - scikit-learn, TensorFlow, PyTorch
+
+27. AI and LLM integration
+    - Integrating with AI and large language models
+
+WEB DEVELOPMENT SPECIALIZATION (4 Chapters)
+────────────────────────────────────────────
+28. Flask or FastAPI
+    - Web frameworks for Python
+
+29. Django Framework
+    - Django web framework
+
+30. Authentication systems
+    - User auth in web apps
+
+31. Deployment and DevOps
+    - Deploying Python applications
+
+AUTOMATION SPECIALIZATION (3 Chapters)
+───────────────────────────────────────
+32. Web scraping
+    - BeautifulSoup, Selenium
+
+33. Task automation
+    - Automating tasks with Python
+
+34. CLI tools
+    - Command-line interface tools
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                                    SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+Total Subjects: 11
+Total Chapters/Lessons: 226
+
+Subject Breakdown:
+  📐 Mathematics:             22 lessons
+  ⚡ Physics:                 16 lessons (4 chapters)
+  🌱 Biology:                  8 lessons
+  🧪 Chemistry:                5 lessons (3 chapters)
+  📖 Khmer Literature:        10 lessons
+  🤝 Moral & Civic:           24 lessons (6 chapters)
+  🌍 Earth Science:            6 lessons
+  🗺️ Geography:                3 lessons
+  🗿 History:                  3 lessons
+  🔤 English:                 33 units (4 chapters)
+  🐍 Python:                  34 chapters
+
+NOTE: Python subject is private and only accessible to binglomole@gmail.com
+
+═══════════════════════════════════════════════════════════════════════════════
+                              END OF DOCUMENT
+═══════════════════════════════════════════════════════════════════════════════

@@ -57,6 +57,9 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
     return questions.map(q => shuffleArray([...Array(q.options.length).keys()]));
   });
 
+  const [inputValue, setInputValue] = useState('');
+  const [matchingSelections, setMatchingSelections] = useState<Record<number, string>>({});
+
   const currentQuestion = questions[currentIdx];
   const audioCtxRef = useRef<AudioContext | null>(null);
 
@@ -133,7 +136,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
   }, [timeLeft, isAnswered]);
 
   // Handle user answer selection (Syncs immediately on interaction)
-  const handleAnswer = (idx: number) => {
+  const handleAnswer = (idx: number, textValue?: string) => {
     if (isAnswered) return;
     initAudio(); // Ensure audio context is ready
 
@@ -149,12 +152,29 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       setRapidClickCount(newRapidClickCount);
     }
 
-    // Map shuffled index back to original index
-    const originalIdx = shuffledIndices[currentIdx][idx];
-    setSelectedIdx(idx); // Store the displayed index for UI
-    setIsAnswered(true);
+    let isCorrect = false;
+    if (currentQuestion.type === 'FillInTheBlank') {
+      const finalInput = textValue ?? inputValue;
+      isCorrect = (finalInput?.trim() === currentQuestion.correctAnswerValue?.trim());
+      setSelectedIdx(null);
+    } else if (currentQuestion.type === 'Matching') {
+      // Check if all pairs match exactly
+      isCorrect = currentQuestion.matchingPairs?.every((pair, i) =>
+        matchingSelections[i] === pair.right
+      ) || false;
+      setSelectedIdx(null);
+    } else {
+      // Map shuffled index back to original index
+      if (idx === -1) {
+        isCorrect = false;
+      } else {
+        const originalIdx = shuffledIndices[currentIdx][idx];
+        setSelectedIdx(idx); // Store the displayed index for UI
+        isCorrect = originalIdx === currentQuestion.correctAnswerIndex;
+      }
+    }
 
-    const isCorrect = originalIdx === currentQuestion.correctAnswerIndex;
+    setIsAnswered(true);
     const newScore = isCorrect ? score + 1 : score;
     const newWrongAnswers = isCorrect ? wrongAnswers : wrongAnswers + 1;
 
@@ -181,6 +201,8 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       const nextIdx = currentIdx + 1;
       setCurrentIdx(nextIdx);
       setSelectedIdx(null);
+      setInputValue('');
+      setMatchingSelections({});
       setIsAnswered(false);
       setShowNextButton(false);
       const nextTime = timePerQuestion;
@@ -208,7 +230,11 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
     );
   }
 
-  const isSelectedCorrect = selectedIdx !== null && shuffledIndices[currentIdx][selectedIdx] === currentQuestion.correctAnswerIndex;
+  const isSelectedCorrect = currentQuestion.type === 'FillInTheBlank'
+    ? (inputValue.trim() === currentQuestion.correctAnswerValue?.trim())
+    : currentQuestion.type === 'Matching'
+      ? currentQuestion.matchingPairs?.every((pair, i) => matchingSelections[i] === pair.right)
+      : (selectedIdx !== null && shuffledIndices[currentIdx][selectedIdx] === currentQuestion.correctAnswerIndex);
 
   return (
     <div className="max-w-2xl mx-auto px-2 relative" onClick={initAudio}>
@@ -222,6 +248,13 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
             <span className="text-lg font-extrabold text-slate-700 khmer-font">
               សំណួរ {currentIdx + 1} <span className="text-slate-300 font-normal">/</span> {questions.length}
             </span>
+            <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full w-fit mt-1 uppercase ${currentQuestion.type === 'FillInTheBlank' ? 'bg-amber-100 text-amber-700' :
+              currentQuestion.type === 'TrueFalse' ? 'bg-blue-100 text-blue-700' :
+                currentQuestion.type === 'Matching' ? 'bg-purple-100 text-purple-700' :
+                  'bg-slate-100 text-slate-600'
+              }`}>
+              {currentQuestion.type}
+            </div>
           </div>
 
           {/* Circular Countdown Timer */}
@@ -279,43 +312,119 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
           {currentQuestion.questionText}
         </h2>
 
-        <div className="grid gap-3">
-          {shuffledIndices[currentIdx].map((originalIdx, displayIdx) => {
-            const option = currentQuestion.options[originalIdx];
-            let stateClass = "border-slate-100 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/30 text-slate-700";
-
-            if (isAnswered) {
-              if (originalIdx === currentQuestion.correctAnswerIndex) {
-                stateClass = "bg-emerald-50 border-emerald-500 text-emerald-800 shadow-md ring-4 ring-emerald-50";
-              } else if (displayIdx === selectedIdx) {
-                stateClass = "bg-rose-50 border-rose-500 text-rose-800 shadow-md ring-4 ring-rose-50";
-              } else {
-                stateClass = "opacity-40 border-slate-50 text-slate-400 grayscale-[0.5]";
-              }
-            }
-
-            return (
+        {currentQuestion.type === 'FillInTheBlank' ? (
+          <div className="space-y-4">
+            <input
+              type="number"
+              value={inputValue}
+              disabled={isAnswered}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="បញ្ចូលលេខចម្លើយនៅទីនេះ..."
+              className={`w-full p-6 text-center text-3xl font-black rounded-2xl border-4 transition-all outline-none ${isAnswered
+                ? (isSelectedCorrect ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-rose-50 border-rose-500 text-rose-800')
+                : 'bg-slate-50 border-slate-200 focus:border-indigo-500 focus:bg-white'
+                }`}
+            />
+            {!isAnswered && (
               <button
-                key={displayIdx}
-                disabled={isAnswered}
-                onClick={() => handleAnswer(displayIdx)}
-                className={`w-full p-3 md:p-4 text-left rounded-2xl border-2 transition-all duration-300 flex items-center gap-4 group active:scale-[0.98] ${stateClass}`}
+                onClick={() => handleAnswer(0)}
+                disabled={!inputValue.trim()}
+                className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-lg hover:bg-indigo-700 disabled:opacity-50 transition-all khmer-font text-xl"
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 transition-all ${isAnswered && originalIdx === currentQuestion.correctAnswerIndex
-                  ? 'bg-emerald-500 text-white rotate-6'
-                  : isAnswered && displayIdx === selectedIdx
-                    ? 'bg-rose-500 text-white -rotate-6'
-                    : 'bg-white text-slate-400 group-hover:bg-indigo-600 group-hover:text-white shadow-sm'
-                  }`}>
-                  {String.fromCharCode(65 + displayIdx)}
-                </div>
-                <span className="khmer-font text-base md:text-lg font-semibold flex-1 break-words">
-                  {String(option || '').trim() || '...'}
-                </span>
+                បញ្ជាក់ចម្លើយ
               </button>
-            );
-          })}
-        </div>
+            )}
+            {isAnswered && !isSelectedCorrect && (
+              <p className="text-center font-bold text-rose-600 khmer-font text-lg">
+                ចម្លើយត្រឹមត្រូវគឺ៖ <span className="text-2xl font-black">{currentQuestion.correctAnswerValue}</span>
+              </p>
+            )}
+          </div>
+        ) : currentQuestion.type === 'Matching' ? (
+          <div className="space-y-4">
+            <p className="text-sm font-bold text-indigo-600 khmer-font mb-4">ភ្ជាប់ជួរខាងឆ្វេងជាមួយជួរខាងស្តាំ</p>
+            {currentQuestion.matchingPairs?.map((pair, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="flex-1 p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl khmer-font text-sm md:text-base text-slate-700 font-bold shadow-sm">
+                  {pair.left}
+                </div>
+                <span className="text-slate-300 font-bold">→</span>
+                <div className="flex-1 relative">
+                  <select
+                    value={matchingSelections[i] || ''}
+                    disabled={isAnswered}
+                    onChange={(e) => setMatchingSelections(prev => ({ ...prev, [i]: e.target.value }))}
+                    className={`w-full p-4 appearance-none rounded-2xl border-2 khmer-font text-sm md:text-base focus:outline-none transition-all pr-10 ${isAnswered
+                        ? (matchingSelections[i] === pair.right ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-rose-50 border-rose-500 text-rose-800')
+                        : 'bg-white border-slate-200 focus:border-indigo-500 shadow-sm text-slate-700'
+                      }`}
+                  >
+                    <option value="">-- ជ្រើសរើស --</option>
+                    {currentQuestion.options.map((opt, optIdx) => (
+                      <option key={optIdx} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                  {!isAnswered && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            {!isAnswered && (
+              <button
+                onClick={() => handleAnswer(0)}
+                disabled={Object.keys(matchingSelections).length < (currentQuestion.matchingPairs?.length || 0)}
+                className="w-full mt-6 py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-xl hover:bg-indigo-700 disabled:opacity-50 transition-all khmer-font text-xl"
+              >
+                បញ្ជាក់ចម្លើយ
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className={`grid gap-3 ${currentQuestion.type === 'TrueFalse' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {shuffledIndices[currentIdx].map((originalIdx, displayIdx) => {
+              const option = currentQuestion.options[originalIdx];
+              if (!option && currentQuestion.type !== 'TrueFalse') return null;
+
+              let stateClass = "border-slate-100 bg-slate-50/50 hover:border-indigo-200 hover:bg-indigo-50/30 text-slate-700";
+
+              if (isAnswered) {
+                if (originalIdx === currentQuestion.correctAnswerIndex) {
+                  stateClass = "bg-emerald-50 border-emerald-500 text-emerald-800 shadow-md ring-4 ring-emerald-50";
+                } else if (displayIdx === selectedIdx) {
+                  stateClass = "bg-rose-50 border-rose-500 text-rose-800 shadow-md ring-4 ring-rose-50";
+                } else {
+                  stateClass = "opacity-40 border-slate-50 text-slate-400 grayscale-[0.5]";
+                }
+              }
+
+              return (
+                <button
+                  key={displayIdx}
+                  disabled={isAnswered}
+                  onClick={() => handleAnswer(displayIdx)}
+                  className={`w-full p-3 md:p-4 text-left rounded-2xl border-2 transition-all duration-300 flex items-center gap-4 group active:scale-[0.98] ${stateClass}`}
+                >
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 transition-all ${isAnswered && originalIdx === currentQuestion.correctAnswerIndex
+                    ? 'bg-emerald-500 text-white rotate-6'
+                    : isAnswered && displayIdx === selectedIdx
+                      ? 'bg-rose-500 text-white -rotate-6'
+                      : 'bg-white text-slate-400 group-hover:bg-indigo-600 group-hover:text-white shadow-sm'
+                    }`}>
+                    {String.fromCharCode(64 + (displayIdx + 1))}
+                  </div>
+                  <span className="khmer-font text-base md:text-lg font-semibold flex-1 break-words">
+                    {String(option || '').trim() || '...'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {isAnswered && (
           <div className="mt-6 pt-6 border-t border-slate-100 animate-in fade-in slide-in-from-top-4 duration-500">

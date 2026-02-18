@@ -582,22 +582,23 @@ const App: React.FC = () => {
           {selectedSubject && (
             <section className="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 animate-in zoom-in-95 duration-300">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="khmer-font text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                      <span className="bg-indigo-100 p-1.5 rounded-lg">🏷️</span> ជ្រើសរើសជំពូក
-                    </h3>
-                    <div className="relative">
-                      <select
-                        value={selectedUnitTitle}
-                        onChange={(e) => { setSelectedUnitTitle(e.target.value); setSelectedChapter(null); }}
-                        className="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl khmer-font text-slate-700 font-semibold appearance-none focus:border-indigo-500 outline-none transition-all pr-12 shadow-sm"
+                <div className="flex flex-col h-full">
+                  <h3 className="khmer-font text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <span className="bg-indigo-100 p-1.5 rounded-lg">🏷️</span> ជ្រើសរើសជំពូក
+                  </h3>
+                  <div className="flex-1 space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar bg-slate-50/50 p-3 rounded-2xl border border-slate-100 mb-6">
+                    {groupedChapters.map(group => (
+                      <button
+                        key={group.title}
+                        onClick={() => { setSelectedUnitTitle(group.title); setSelectedChapter(null); }}
+                        className={`w-full p-4 text-left rounded-xl border-2 transition-all khmer-font text-base flex items-center gap-4 ${selectedUnitTitle === group.title
+                          ? 'border-indigo-500 bg-white text-indigo-700 font-bold shadow-md scale-[1.01]'
+                          : 'border-white hover:border-indigo-100 text-slate-600 bg-white/80'
+                          }`}
                       >
-                        {groupedChapters.map(group => (
-                          <option key={group.title} value={group.title}>{group.title}</option>
-                        ))}
-                      </select>
-                    </div>
+                        <span className="flex-1 line-clamp-2 leading-snug">{group.title}</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
