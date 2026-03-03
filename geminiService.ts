@@ -43,10 +43,21 @@ export const generateQuiz = async (
     5. The "explanation" must be a helpful paragraph in Khmer explaining WHY the answer is correct.
     Technical terms for Mathematics or Science can be in English in parentheses if standard.`;
 
+  const isSQL = subject === Subject.SQL;
+  const isTLAPlus = subject === Subject.TLAPlus;
+
+  const subjectPersona = isSQL
+    ? 'database engineer and SQL/PostgreSQL/Supabase instructor'
+    : isTLAPlus
+      ? 'formal methods expert and TLA+ specification instructor (expert in Leslie Lamport\'s TLA+, temporal logic, and model checking)'
+      : 'programming instructor';
+
+  const subjectContext = isSQL ? 'SQL & Supabase' : isTLAPlus ? 'TLA+ Formal Specification' : 'Python';
+
   const prompt = inEnglish
     ? `
-    You are a professional programming instructor. 
-    Generate a quiz based on the following Python learning context:
+    You are a professional ${subjectPersona}. 
+    Generate a quiz based on the following ${subjectContext} learning context:
     
     SUBJECT: ${subject}
     CHAPTER: ${chapterTitle}
@@ -57,7 +68,7 @@ export const generateQuiz = async (
     - 1 x MCQ: Standard multiple choice.
     - 1 x Matching: Match 3-4 items/definitions on the left to their corresponding categories/names on the right.
     - 1 x TrueFalse: True or False question.
-    - 1 x FillInTheBlank: Must require a NUMERICAL answer ONLY (the answer should be a number).
+    - 1 x FillInTheBlank: Must require a SHORT KEYWORD or SYNTAX answer (e.g. a SQL keyword, function name, or clause name). The answer should be a single word or short phrase.
     - 1 x OddOneOut: Which choice doesn't fit the theme?
     - 1 x DefinitionMatch: Provide a definition, ask for the term.
     - 1 x WhatsMissing: Describe a list/sequence where one item is missing.
@@ -145,9 +156,17 @@ export const generateQuiz = async (
         q.correctAnswerIndex = (q.correctAnswerIndex === 1) ? 1 : 0;
       } else if (q.type === 'FillInTheBlank') {
         q.options = [];
-        // Ensure correctAnswerValue is a string representation of a number
-        const num = String(q.correctAnswerValue).replace(/[^0-9.]/g, '');
-        q.correctAnswerValue = num || '0';
+        if (subject === Subject.SQL) {
+          // For SQL, allow keyword/syntax answers (e.g. "INNER JOIN", "CASCADE")
+          q.correctAnswerValue = String(q.correctAnswerValue || '').trim() || 'SELECT';
+        } else if (subject === Subject.TLAPlus) {
+          // For TLA+, allow operator/keyword answers (e.g. "WF_vars", "CHOOSE", "[]")
+          q.correctAnswerValue = String(q.correctAnswerValue || '').trim() || 'INVARIANT';
+        } else {
+          // For other subjects (Python/Khmer), ensure correctAnswerValue is a number string
+          const num = String(q.correctAnswerValue).replace(/[^0-9.]/g, '');
+          q.correctAnswerValue = num || '0';
+        }
       } else {
         if (!q.options || q.options.length < 4) {
           q.options = q.options || [];

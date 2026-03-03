@@ -260,12 +260,14 @@ const App: React.FC = () => {
 
     try {
       const isPython = selectedSubject === Subject.Python;
+      const isSQL = selectedSubject === Subject.SQL;
+      const isTLAPlus = selectedSubject === Subject.TLAPlus;
       const q = await generateQuiz(
         selectedSubject,
         selectedChapter.title,
         selectedChapter.summary,
         difficulty,
-        isPython ? { numQuestions: 10, inEnglish: true } : {}
+        (isPython || isSQL || isTLAPlus) ? { numQuestions: 10, inEnglish: true } : {}
       );
       const newSession: QuizSession = {
         subject: selectedSubject,
@@ -550,7 +552,7 @@ const App: React.FC = () => {
             <h2 className="text-3xl font-extrabold text-slate-800 mb-2 khmer-font">សួស្តី {user ? user.displayName.split(' ')[0] : 'មិត្តអ្នករៀន'}! 👋</h2>
             <p className="text-slate-500 text-lg mb-8 khmer-font">ជ្រើសរើសមុខវិជ្ជា និងមេរៀន ដើម្បីចាប់ផ្តើមបង្កើតលំហាត់ដោយ Ai ។</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {(Object.values(Subject) as Subject[]).filter(sub => sub !== Subject.Python || user?.email === 'binglomole@gmail.com').map(sub => (
+              {(Object.values(Subject) as Subject[]).filter(sub => (sub !== Subject.Python && sub !== Subject.SQL && sub !== Subject.TLAPlus) || user?.email === 'binglomole@gmail.com').map(sub => (
                 <SubjectCard
                   key={sub}
                   subject={sub}

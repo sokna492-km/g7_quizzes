@@ -10,7 +10,9 @@ export enum Subject {
   Geography = 'ភូមិវិទ្យា',
   History = 'ប្រវត្តិវិទ្យា',
   English = 'ភាសាអង់គ្លេស',
-  Python = 'Python'
+  Python = 'Python',
+  SQL = 'SQL in Supabase',
+  TLAPlus = 'TLA+'
 }
 
 export enum Difficulty {
