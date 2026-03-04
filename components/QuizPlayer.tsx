@@ -15,7 +15,7 @@ interface QuizPlayerProps {
   initialTime?: number;
   /** Max seconds per question (used for countdown and next-question reset). Default 30. */
   timePerQuestion?: number;
-  onFinish: (score: number, wrongAnswers: number, questionTimes: number[], rapidClickCount: number) => void;
+  onFinish: (score: number, wrongAnswers: number, questionTimes: number[], rapidClickCount: number, wrongQuestions: import('../types').Question[]) => void;
   onProgressUpdate: (idx: number, score: number, timeLeft: number) => void;
   initialShuffledIndices?: number[][];
   initialWrongAnswers?: number;
@@ -48,6 +48,8 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
   const [rapidClickCount, setRapidClickCount] = useState(initialRapidClickCount);
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
   const [showNextButton, setShowNextButton] = useState(false);
+  // Track questions the user answered incorrectly (for redo-wrong-only feature)
+  const [wrongQuestions, setWrongQuestions] = useState<import('../types').Question[]>([]);
 
   // Generate shuffled indices for all questions on mount (or use initial)
   const [shuffledIndices] = useState<number[][]>(() => {
@@ -183,6 +185,8 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       playSound('correct');
     } else {
       setWrongAnswers(newWrongAnswers);
+      // Record this question as a wrong answer for potential redo
+      setWrongQuestions(prev => [...prev, currentQuestion]);
       playSound('incorrect');
     }
 
@@ -210,8 +214,8 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
       setQuestionStartTime(Date.now()); // Reset timer for next question
       onProgressUpdate(nextIdx, score, nextTime);
     } else {
-      // Quiz finished - pass anti-cheat data
-      onFinish(score, wrongAnswers, questionTimes, rapidClickCount);
+      // Quiz finished - pass anti-cheat data + wrong questions for redo feature
+      onFinish(score, wrongAnswers, questionTimes, rapidClickCount, wrongQuestions);
     }
   };
 
@@ -355,8 +359,8 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
                     disabled={isAnswered}
                     onChange={(e) => setMatchingSelections(prev => ({ ...prev, [i]: e.target.value }))}
                     className={`w-full p-4 appearance-none rounded-2xl border-2 khmer-font text-sm md:text-base focus:outline-none transition-all pr-10 ${isAnswered
-                        ? (matchingSelections[i] === pair.right ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-rose-50 border-rose-500 text-rose-800')
-                        : 'bg-white border-slate-200 focus:border-indigo-500 shadow-sm text-slate-700'
+                      ? (matchingSelections[i] === pair.right ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-rose-50 border-rose-500 text-rose-800')
+                      : 'bg-white border-slate-200 focus:border-indigo-500 shadow-sm text-slate-700'
                       }`}
                   >
                     <option value="">-- ជ្រើសរើស --</option>

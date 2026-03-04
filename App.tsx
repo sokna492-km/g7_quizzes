@@ -72,9 +72,46 @@ const App: React.FC = () => {
   const [loadingMessageIdx, setLoadingMessageIdx] = useState(0);
   const [quotaError, setQuotaError] = useState<boolean>(false);
 
+  // Redo-wrong-only state: questions the user answered incorrectly in the last quiz
+  const [lastWrongQuestions, setLastWrongQuestions] = useState<Question[]>([]);
+  // Whether the one-time redo-wrong offer is still available for the current result
+  const [redoWrongAvailable, setRedoWrongAvailable] = useState(false);
+  // Time-based cooldown: maps "subject|chapter|difficulty" → Unix timestamp when the combo unlocks.
+  // Any completed quiz locks the combo for 3 hours. Persisted in localStorage.
+  const COMBO_LOCK_MS = 3 * 60 * 60 * 1000; // 3 hours
+  const [lockedCombos, setLockedCombos] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem('k7_locked_combos');
+      return saved ? JSON.parse(saved) as Record<string, number> : {};
+    } catch { return {}; }
+  });
+
+  /** Returns true if the combo is currently locked (within 3-hour cooldown). */
+  const isComboCurrentlyLocked = (key: string): boolean => {
+    const expiresAt = lockedCombos[key];
+    return !!expiresAt && Date.now() < expiresAt;
+  };
+
+  /** Returns a human-readable string of how long is left on the lock, e.g. "2h 45m". */
+  const getLockTimeRemaining = (key: string): string => {
+    const expiresAt = lockedCombos[key];
+    if (!expiresAt) return '';
+    const msLeft = expiresAt - Date.now();
+    if (msLeft <= 0) return '';
+    const h = Math.floor(msLeft / 3600000);
+    const m = Math.floor((msLeft % 3600000) / 60000);
+    if (h > 0) return `${h}ម៉ោង ${m}នាទី`;
+    return `${m}នាទី`;
+  };
+
   // Validation modal state
   const [isValidationModalOpen, setIsValidationModalOpen] = useState(false);
   const [validationFailureReasons, setValidationFailureReasons] = useState<string[]>([]);
+  // Whether the currently selected quiz combo is locked (redo unused)
+  const [isComboLocked, setIsComboLocked] = useState(false);
+  // Whether the current quiz in progress is itself a redo session (one-time guard)
+  const [isRedoSession, setIsRedoSession] = useState(false);
+
 
   const loadingMessages = [
     "កំពុងអានសៀវភៅសិក្សារបស់អ្នក...",
@@ -216,11 +253,16 @@ const App: React.FC = () => {
       const newStep = event.state?.step || window.location.pathname.replace('/', '');
       const validSteps: AppStep[] = ['setup', 'loading', 'quiz', 'result', 'dashboard', 'math-game'];
 
-      if (validSteps.includes(newStep as AppStep)) {
-        setStep(newStep as AppStep);
-      } else {
-        setStep('setup');
+      const resolvedStep = validSteps.includes(newStep as AppStep) ? (newStep as AppStep) : 'setup';
+
+      // If navigating away from result page, consume (cancel) the redo offer.
+      // The lock remains — user must use redo or the combo stays locked.
+      if (resolvedStep !== 'result') {
+        setRedoWrongAvailable(false);
+        setLastWrongQuestions([]);
       }
+
+      setStep(resolvedStep);
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -247,12 +289,29 @@ const App: React.FC = () => {
     }
   }, [activeSession]);
 
+  // Persist locked combos (timestamp map) to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('k7_locked_combos', JSON.stringify(lockedCombos));
+  }, [lockedCombos]);
+
+  /** Build a unique key for a quiz combination */
+  const buildComboKey = (sub: Subject, chapterTitle: string, diff: Difficulty) =>
+    `${sub}|${chapterTitle}|${diff}`;
+
   const handleStartQuiz = async () => {
     if (!selectedSubject || !selectedChapter) return;
     if (!user) {
       setIsAuthOpen(true);
       return;
     }
+
+    // Block regeneration if this combo is within the 3-hour cooldown window
+    const comboKey = buildComboKey(selectedSubject, selectedChapter.title, difficulty);
+    if (isComboCurrentlyLocked(comboKey)) {
+      setIsComboLocked(true);
+      return;
+    }
+    setIsComboLocked(false);
 
     setIsLoading(true);
     setQuotaError(false);
@@ -287,6 +346,10 @@ const App: React.FC = () => {
       setRedoQuestions(q);
       setActiveSession(newSession);
       setLastTotalQuestions(q.length);
+      // Clear any previous redo-wrong state when a fresh quiz starts
+      setLastWrongQuestions([]);
+      setRedoWrongAvailable(false);
+      setIsRedoSession(false); // A fresh quiz is never a redo session
       setIsLoading(false);
 
       setTimeout(() => navigateTo('quiz'), 50);
@@ -300,6 +363,41 @@ const App: React.FC = () => {
       }
       navigateTo('setup');
     }
+  };
+
+  const handleRedoWrongQuestions = () => {
+    if (lastWrongQuestions.length === 0) return;
+
+    const targetSubject = selectedSubject;
+    const targetChapter = selectedChapter;
+    if (!targetSubject || !targetChapter) {
+      navigateTo('setup');
+      return;
+    }
+
+    // Mark redo as used — lock stays (3h cooldown independent of redo)
+    const comboKey = buildComboKey(targetSubject, targetChapter.title, difficulty);
+    // Consume the one-time redo opportunity
+    setRedoWrongAvailable(false);
+    // Flag this as a redo session so handleQuizFinish won't offer another redo
+    setIsRedoSession(true);
+
+    const newSession: QuizSession = {
+      subject: targetSubject,
+      chapter: targetChapter,
+      difficulty,
+      questions: lastWrongQuestions,
+      currentIdx: 0,
+      score: 0,
+      timeLeft: getTimePerQuestion(difficulty),
+      lastUpdated: Date.now(),
+      wrongAnswers: 0,
+      questionTimes: [],
+      rapidClickCount: 0,
+      shuffledIndices: generateShuffledIndices(lastWrongQuestions)
+    };
+    setActiveSession(newSession);
+    navigateTo('quiz');
   };
 
   const handleRedoQuiz = () => {
@@ -344,11 +442,38 @@ const App: React.FC = () => {
   };
 
   /** Lesson quiz completion. totalPoints and history are for lesson quizzes only; Math Game (Number Chase) score is never added here. */
-  const handleQuizFinish = async (score: number, wrongAnswers: number, questionTimes: number[], rapidClickCount: number) => {
+  const handleQuizFinish = async (score: number, wrongAnswers: number, questionTimes: number[], rapidClickCount: number, wrongQuestionsFromSession: Question[]) => {
     const total = (activeSession?.questions.length || redoQuestions.length || 7);
     setLastTotalQuestions(total);
     setLastScore(score);
     const today = new Date().toDateString();
+
+    // Capture current session metadata before clearing
+    const finishedSubject = activeSession?.subject || selectedSubject;
+    const finishedChapter = activeSession?.chapter || selectedChapter;
+    const finishedDifficulty = activeSession?.difficulty || difficulty;
+
+    // Lock this combo for 3 hours from now (applies to ALL completed quizzes, any score).
+    // This is independent of the redo system.
+    if (finishedSubject && finishedChapter) {
+      const comboKey = buildComboKey(finishedSubject, finishedChapter.title, finishedDifficulty);
+      const expiresAt = Date.now() + COMBO_LOCK_MS;
+      setLockedCombos(prev => ({ ...prev, [comboKey]: expiresAt }));
+    }
+
+    // Grant one-time redo offer ONLY for original sessions with wrong answers.
+    // isRedoSession guards against offering a second redo after the redo itself finishes.
+    if (wrongQuestionsFromSession.length > 0 && !isRedoSession) {
+      setLastWrongQuestions(wrongQuestionsFromSession);
+      setRedoWrongAvailable(true);
+    } else {
+      // For redo sessions: keep wrong questions for display context, just don't offer redo again
+      // For perfect scores: clear wrong questions
+      setLastWrongQuestions(isRedoSession ? wrongQuestionsFromSession : []);
+      setRedoWrongAvailable(false);
+    }
+    // Always reset the redo-session flag after any quiz finishes
+    setIsRedoSession(false);
 
     // PHASE 1 & 2: Anti-Cheat Validation using centralized utilities
     const validation = validateQuizResults(score, total, questionTimes);
@@ -420,6 +545,9 @@ const App: React.FC = () => {
     setSelectedChapter(null);
     setActiveSession(null);
     setRedoQuestions([]);
+    // Clear the one-time redo offer when user goes home (lock remains to prevent regen)
+    setRedoWrongAvailable(false);
+    setLastWrongQuestions([]);
     navigateTo('setup');
   };
 
@@ -514,6 +642,16 @@ const App: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [step]);
+
+  // Reactively check if current selection combo is locked whenever it changes
+  useEffect(() => {
+    if (selectedSubject && selectedChapter) {
+      const key = buildComboKey(selectedSubject, selectedChapter.title, difficulty);
+      setIsComboLocked(isComboCurrentlyLocked(key));
+    } else {
+      setIsComboLocked(false);
+    }
+  }, [selectedSubject, selectedChapter, difficulty, lockedCombos]);
 
   if (isInitializing) {
     return (
@@ -636,15 +774,27 @@ const App: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                <div className="flex-[1.4] w-full">
+                <div className="flex-[1.4] w-full flex flex-col gap-2">
+                  {/* Locked combo warning banner */}
+                  {isComboLocked && selectedSubject && selectedChapter && (() => {
+                    const timeLeft = getLockTimeRemaining(buildComboKey(selectedSubject, selectedChapter.title, difficulty));
+                    return (
+                      <div className="flex items-start gap-3 p-3 bg-amber-50 border-2 border-amber-200 rounded-xl animate-in fade-in zoom-in-95 duration-300">
+                        <span className="text-amber-500 text-lg flex-shrink-0 mt-0.5">🔒</span>
+                        <p className="khmer-font text-sm text-amber-800 font-semibold leading-snug">
+                          មេរៀននេះត្រូវបានចាក់សោ{timeLeft ? ` រហូតដល់ ${timeLeft}ទៀត` : ''}។ ជ្រើសរើសមេរៀន ឬកម្រិតផ្សេង ដើម្បីចាប់ផ្ដើម។
+                        </p>
+                      </div>
+                    );
+                  })()}
                   <button
-                    disabled={!selectedChapter || isLoading}
+                    disabled={!selectedChapter || isLoading || isComboLocked}
                     onClick={handleStartQuiz}
-                    className="group relative w-full py-5 bg-indigo-600 text-white text-xl font-bold rounded-2xl shadow-2xl shadow-indigo-200 hover:bg-indigo-700 transition-all disabled:opacity-50 overflow-hidden active:scale-[0.99]"
+                    className={`group relative w-full py-5 text-white text-xl font-bold rounded-2xl shadow-2xl transition-all disabled:opacity-50 overflow-hidden active:scale-[0.99] ${isComboLocked ? 'bg-slate-400 shadow-slate-200 cursor-not-allowed' : 'bg-indigo-600 shadow-indigo-200 hover:bg-indigo-700'}`}
                   >
                     <div className="relative z-10 flex items-center justify-center gap-3">
-                      <span className="khmer-font">ចាប់ផ្ដើមបង្កើតលំហាត់</span>
-                      <svg className="w-6 h-6 transform transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                      <span className="khmer-font">{isComboLocked ? '🔒 ចាក់សោរួច' : 'ចាប់ផ្ដើមបង្កើតលំហាត់'}</span>
+                      {!isComboLocked && <svg className="w-6 h-6 transform transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
                     </div>
                   </button>
                 </div>
@@ -768,15 +918,24 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-2 pt-0">
-            <button
-              onClick={handleRedoQuiz}
-              className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all khmer-font active:scale-95 flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              សាកល្បងម្ដងទៀត
-            </button>
+            {/* One-time redo-wrong offer: only shown if there are wrong answers and redo hasn't been used */}
+            {redoWrongAvailable && lastWrongQuestions.length > 0 ? (
+              <button
+                onClick={handleRedoWrongQuestions}
+                className="w-full py-4 bg-amber-500 text-white font-black rounded-2xl shadow-xl shadow-amber-100 hover:bg-amber-600 hover:-translate-y-0.5 transition-all khmer-font active:scale-95 flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                <span>ធ្វើម្ដងទៀតតែសំណួរខុស ({lastWrongQuestions.length} សំណួរ)</span>
+                <span className="ml-1 text-xs bg-white/20 px-2 py-0.5 rounded-full">១ដង</span>
+              </button>
+            ) : lastScore === lastTotalQuestions ? (
+              <div className="w-full py-4 bg-emerald-50 border-2 border-emerald-200 text-emerald-700 font-black rounded-2xl text-center khmer-font flex items-center justify-center gap-2">
+                <span>🎉</span>
+                <span>ល្អឥតខ្ចោះ! គ្មានសំណួរខុសសោះ</span>
+              </div>
+            ) : null}
             <button
               onClick={reset}
               className="w-full py-3 bg-slate-100 text-slate-600 font-black rounded-2xl hover:bg-slate-200 transition-all khmer-font active:scale-95"
